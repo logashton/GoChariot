@@ -1,13 +1,16 @@
-# GoChariot Project Proposal
+## GoChariot
 
 ## Team Members
 >Logan Phillips, Hasan Hashim, Madelyn Good
 
 ## Nickname
->Nickname
+>GC
 
 ## Description
->Description
+>GoChariot (GC) is a web application, accessible via a web browser, that is used to track and interact with UNCG's Spartan Chariots.
+>GC is designed to reimplement UNCG's Chariot tracking system and expand upon it by adding features that are useful for both students and drivers.
+>The motivation behind GC is due to the fact that UNCG's current Spartan Chariot tracking is clunky and lacks any meaningful features.
+>The goal of GC is to  
 
 
 
