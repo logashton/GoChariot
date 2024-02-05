@@ -14,6 +14,6 @@
 
 
 
-![Use Case Diagram](https://github.com/logashton/GoChariot/blob/main/WMS%20Use%20Case.png)
+![Use Case Diagram](https://github.com/logashton/GoChariot/blob/main/WMS%20Use%20Case%202.png)
 
 
