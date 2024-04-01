@@ -1,0 +1,8 @@
+To build the database:
+
+open the psql shell. log into the user you made (you can probably enter default)
+run the command: \i /path/to/build.sql
+after running the command, the database and its tables should be made.
+
+
+if you are getting errors with the shell, you can also create the database from pgadmin 4.
