@@ -16,14 +16,14 @@ public class UserController {
     UserService UserService;
 
     @GetMapping({"/all", "/", ""})
-    public String getAllProducts(Model model) {
+    public String getAllUsers(Model model) {
         model.addAttribute("userList",
                 UserService.getAllUsers());
         return "user/user-list";
     }
 
     @GetMapping("/id={userId}")
-    public String getProductById(@PathVariable int userId, Model model) {
+    public String getUserById(@PathVariable int userId, Model model) {
         model.addAttribute("user",
                 UserService.getUserById(userId));
         return "user/user-detail";
