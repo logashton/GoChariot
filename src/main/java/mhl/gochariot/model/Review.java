@@ -1,6 +1,7 @@
 package mhl.gochariot.model;
 
 import jakarta.persistence.*;
+import mhl.gochariot.model.Driver;
 import java.sql.Timestamp;
 import lombok.Getter;
 import lombok.Setter;
