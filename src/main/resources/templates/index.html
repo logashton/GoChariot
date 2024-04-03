@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <th:block th:replace="fragments/base :: baseHead"></th:block>
+</head>
+<body>
+    <div id="splash" th:style="'background-image: url(\'' + @{/images/chariot-students-splash-overlay0.3.jpg} + '\');'">
+    <th:block th:replace="fragments/navbar :: navbarContent"></th:block>
+    </div>
+
+    <main>
+        <section class="row">
+            <div class="column left">
+                <h2>LIVE MAP</h2>
+                <hr class="yellow">
+                <div id="map"></div>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>

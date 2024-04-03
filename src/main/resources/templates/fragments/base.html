@@ -1,0 +1,22 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="base">
+<head>
+    <th:block th:fragment="baseHead">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Go Chariot</title>
+        <meta content="Go Chariot" property="og:title"/>
+        <meta content="A reimagined bus tracker for UNCG's Spartan Chariots" property="og:description"/>
+        <meta content="https://gochariot.com" property="og:url"/>
+        <meta content="#00008B" data-react-helmet="true" name="theme-color"/>
+        <!--- links & styles -->
+        <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@700' rel='stylesheet'>
+        <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@500' rel='stylesheet'>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" th:href="@{/css/index.css}">
+        <link rel="icon" th:href="@{/images/favicon.png}">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    </th:block>
+</head>
+</html>
