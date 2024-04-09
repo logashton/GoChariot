@@ -1,35 +1,31 @@
 package mhl.gochariot.model;
 
 import jakarta.persistence.*;
+import java.sql.Timestamp;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NonNull;
 
 @Entity
-@Table(name = "admin")
-public class Admin {
+@Table(name = "Roles")
+public class Role {
     @Id
     @Getter
     @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer adminId;
-
-    @OneToOne
-    @Getter
-    @Setter
-    @JoinColumn(name = "userId", unique = true)
-    private User user;
+    private long roleId;
 
     @Getter
     @Setter
     @NonNull
-    private String fullName;
+    @Column(unique = true, nullable = false)
+    private String roleName;
 
     @Override
     public String toString() {
-        return "Admin{" +
-                "adminId=" + adminId +
-                ", fullName='" + fullName + '\'' +
+        return "Role{" +
+                "roleId=" + roleId +
+                ", roleName='" + roleName + '\'' +
                 '}';
     }
 }

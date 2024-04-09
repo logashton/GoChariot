@@ -11,8 +11,8 @@ import mhl.gochariot.model.Student;
 @Controller
 @RequestMapping("/student")
 public class StudentController {
-    @GetMapping({"/", "/home", "/index"})
+    @GetMapping({"/", "/home", "/index", ""})
     public String userHome() {
-        return "stu_index";
+        return "student/stu_index";
     }
 }

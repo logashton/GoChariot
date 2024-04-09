@@ -38,7 +38,7 @@ public class User {
     @Getter
     @Setter
     @NonNull
-    @Column(name = "CreatedAt", nullable = false)
+    @Column(name = "CreatedAt", nullable = false, updatable = false)
     private Timestamp createdAt;
 
     @Getter

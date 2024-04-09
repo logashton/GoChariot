@@ -12,19 +12,20 @@ public class Student {
     @Getter
     @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "StudentId")
     private Integer studentId;
+
+    @OneToOne
+    @JoinColumn(name = "userId", unique = true)
+    private User user;
 
     @Getter
     @Setter
     @NonNull
-    @Column(name = "Rides", nullable = false)
     private Integer rides;
 
     @Getter
     @Setter
     @NonNull
-    @Column(name = "FullName", nullable = false)
     private String fullName;
 
     @Override

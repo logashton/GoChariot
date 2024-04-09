@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("/")
 public class PublicController {
     // todo: authentication redirects
-    @GetMapping({"/home", ""})
+    @GetMapping({"/home", "", "/index"})
     public String showHome() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         // redirects based on user role
         if (auth != null) {
             if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("STUDENT"))) {
-                return "error";
+                return "student/stu_index";
             } else if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("DRIVER"))) {
                 return "";
             }
