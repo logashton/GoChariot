@@ -19,6 +19,9 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/home", "/images/**", "/css/**").permitAll()
+                        .requestMatchers("/student/**").hasRole("STUDENT")
+                        .requestMatchers("/driver/**").hasRole("DRIVER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
@@ -34,13 +37,24 @@ public class SecurityConfiguration {
     // gonna have to implement this with jpa later instead of in memory authentication
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails user =
-                User.withDefaultPasswordEncoder()
-                        .username("user")
-                        .password("password")
-                        .roles("USER")
-                        .build();
+        UserDetails studentUser = User.withDefaultPasswordEncoder()
+                .username("student")
+                .password("password")
+                .roles("STUDENT")
+                .build();
 
-        return new InMemoryUserDetailsManager(user);
+        UserDetails driverUser = User.withDefaultPasswordEncoder()
+                .username("driver")
+                .password("password")
+                .roles("DRIVER")
+                .build();
+
+        UserDetails adminUser = User.withDefaultPasswordEncoder()
+                .username("admin")
+                .password("password")
+                .roles("ADMIN")
+                .build();
+
+        return new InMemoryUserDetailsManager(studentUser, driverUser, adminUser);
     }
 }
