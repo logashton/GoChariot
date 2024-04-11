@@ -2,6 +2,8 @@ package mhl.gochariot.model;
 
 import jakarta.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NonNull;
@@ -16,8 +18,13 @@ public class Role {
     private long roleId;
 
     @NonNull
+    @Getter
+    @Setter
     @Column(unique = true, nullable = false)
     private String roleName;
+
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users;
 
     @Override
     public String toString() {

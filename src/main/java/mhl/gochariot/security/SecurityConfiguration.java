@@ -27,7 +27,7 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/home", "/images/**", "/css/**").permitAll()
-                        .requestMatchers("/student/**").hasRole("STUDENT")
+                        .requestMatchers("/student/**").hasAnyAuthority("Student")
                         .requestMatchers("/driver/**").hasRole("DRIVER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
@@ -47,28 +47,4 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    // gonna have to implement this with jpa later instead of in memory authentication
-    /*
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails studentUser = User.withDefaultPasswordEncoder()
-                .username("student")
-                .password("password")
-                .roles("STUDENT")
-                .build();
-
-        UserDetails driverUser = User.withDefaultPasswordEncoder()
-                .username("driver")
-                .password("password")
-                .roles("DRIVER")
-                .build();
-
-        UserDetails adminUser = User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("password")
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(studentUser, driverUser, adminUser);
-    }*/
 }

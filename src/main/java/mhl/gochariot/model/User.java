@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NonNull;
@@ -17,7 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Setter
 @Entity
 @Table(name = "Users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,9 +58,13 @@ public class User {
     @Column(name = "LastName", nullable = false)
     private String lastName;
 
-
-    @OneToMany(fetch = FetchType.EAGER)
-    List<Role> roleList;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "UserRoles",
+            joinColumns = @JoinColumn(name = "UserId"),
+            inverseJoinColumns = @JoinColumn(name = "RoleId")
+    )
+    List<Role> roles;
 
     @Override
     public String toString() {
@@ -70,5 +76,39 @@ public class User {
                 + ", createdAt=" + createdAt
                 + ", updatedAt=" + updatedAt
                 + '}';
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getPassword() {
+        return this.getPasswordHash();
+    }
+
+
+    //todo: add these to the schema
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

@@ -8,6 +8,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Controller
 @RequestMapping("/")
@@ -15,19 +18,18 @@ public class PublicController {
     // todo: authentication redirects
     @GetMapping({"/home", "", "/index"})
     public String showHome() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // redirects based on user role
-        if (auth != null) {
-            if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("STUDENT"))) {
-                return "student/stu_index";
-            } else if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("DRIVER"))) {
-                return "";
+        if (authentication != null) {
+            System.out.println("Authenticated user: " + authentication.getName());
+            for (GrantedAuthority authority : authentication.getAuthorities()) {
+                if (authority.getAuthority().equals("Student")) {
+                    return "redirect:/student";
+                }
             }
         }
         return "index";
     }
-
     @GetMapping("/login")
     public String showLogin() {
         return "login";
