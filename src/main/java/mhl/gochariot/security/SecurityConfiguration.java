@@ -1,5 +1,6 @@
 package mhl.gochariot.security;
 
+import mhl.gochariot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,11 +17,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //todo
-        auth.userDetailsService();
+    @Autowired
+    UserService userService;
 
-    }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -35,13 +34,14 @@ public class SecurityConfiguration {
                         .loginPage("/login")
                         .permitAll()
                 )
-
+                .userDetailsService(userService)
                 .logout(LogoutConfigurer::permitAll);
 
         return http.build();
     }
 
     // gonna have to implement this with jpa later instead of in memory authentication
+    /*
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails studentUser = User.withDefaultPasswordEncoder()
@@ -63,5 +63,5 @@ public class SecurityConfiguration {
                 .build();
 
         return new InMemoryUserDetailsManager(studentUser, driverUser, adminUser);
-    }
+    }*/
 }

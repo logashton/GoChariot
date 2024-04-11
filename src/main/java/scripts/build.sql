@@ -7,6 +7,9 @@ CREATE TABLE Users (
                        Email VARCHAR(255) UNIQUE NOT NULL,
                        PasswordHash VARCHAR(255) NOT NULL,
                        PasswordSalt VARCHAR(255) NOT NULL,
+                       UserName VARCHAR(255) UNIQUE NOT NULL,
+                       FirstName VARCHAR(255) NOT NULL,
+                       LastName VARCHAR(255) NOT NULL,
                        CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        UpdatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -24,7 +27,7 @@ CREATE TABLE UserRoles (
                            PRIMARY KEY (UserId, RoleId)
 );
 
-CREATE TABLE Driver (
+CREATE TABLE Drivers (
                         DriverId SERIAL PRIMARY KEY,
                         UserId INTEGER UNIQUE REFERENCES Users(UserId),
                         HoursClocked INTEGER DEFAULT 0,
@@ -32,13 +35,13 @@ CREATE TABLE Driver (
                         FullName VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Admin (
+CREATE TABLE Admins (
                        AdminId SERIAL PRIMARY KEY,
                        UserId INTEGER UNIQUE REFERENCES Users(UserId),
                        FullName VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Student (
+CREATE TABLE Students (
                          StudentId SERIAL PRIMARY KEY,
                          UserId INTEGER UNIQUE REFERENCES Users(UserId),
                          Rides INTEGER DEFAULT 0,
@@ -56,7 +59,7 @@ CREATE TABLE Logins (
 CREATE TABLE Reviews (
                          ReviewId SERIAL PRIMARY KEY,
                          UserId INTEGER REFERENCES Users(UserId),
-                         DriverId INTEGER REFERENCES Driver(DriverId),
+                         DriverId INTEGER REFERENCES Drivers(DriverId),
                          Rating DECIMAL(3, 2) NOT NULL,
                          Content TEXT,
                          CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -64,7 +67,7 @@ CREATE TABLE Reviews (
 
 CREATE TABLE Routes (
                         RouteId SERIAL PRIMARY KEY,
-                        DriverId INTEGER REFERENCES Driver(DriverId),
+                        DriverId INTEGER REFERENCES Drivers(DriverId),
                         Name VARCHAR(255) NOT NULL,
                         StartPoint VARCHAR(255) NOT NULL,
                         EndPoint VARCHAR(255) NOT NULL,
@@ -83,7 +86,7 @@ CREATE TABLE Alerts (
                         CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Request (
+CREATE TABLE Requests (
                          RequestId SERIAL PRIMARY KEY,
                          PickUp VARCHAR(255) NOT NULL,
                          DropOff VARCHAR(255) NOT NULL,

@@ -12,21 +12,20 @@ import mhl.gochariot.service.UserService;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    UserService UserService;
 
+    /*
     @GetMapping({"/all", "/", ""})
     public String getAllUsers(Model model) {
         model.addAttribute("userList",
-                UserService.getAllUsers());
+                //UserService.getAllUsers());
         return "user/user-list";
     }
 
     @GetMapping("/id={userId}")
     public String getUserById(@PathVariable int userId, Model model) {
         model.addAttribute("user",
-                UserService.getUserById(userId));
+                //UserService.getUserById(userId));
         return "user/user-detail";
-    }
+    }*/
 
 }
