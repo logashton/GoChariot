@@ -15,15 +15,15 @@ public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ReviewId")
-    private Integer reviewId;
+    @Column(name = "Id")
+    private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NonNull
     @JoinColumn(name = "UserId", nullable = false)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NonNull
     @JoinColumn(name = "DriverId", nullable = false)
     private Driver driver;
@@ -43,7 +43,7 @@ public class Review {
     @Override
     public String toString() {
         return "Review{" +
-                "reviewId=" + reviewId +
+                "reviewId=" + id +
                 ", user=" + user +
                 ", driver=" + driver +
                 ", rating=" + rating +

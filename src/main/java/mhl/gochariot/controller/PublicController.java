@@ -1,5 +1,6 @@
 package mhl.gochariot.controller;
 
+import mhl.gochariot.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Controller
 @RequestMapping("/")
 public class PublicController {
+    @Autowired
+    ReviewService reviewService;
+
     @GetMapping({"/home", "", "/index"})
     public String showHome() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -32,5 +36,10 @@ public class PublicController {
     @GetMapping("/login")
     public String showLogin() {
         return "login";
+    }
+
+    @GetMapping("/reviews")
+    public String reviews() {
+        return "reviews";
     }
 }

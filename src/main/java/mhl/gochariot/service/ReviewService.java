@@ -1,8 +1,14 @@
 package mhl.gochariot.service;
 
 import mhl.gochariot.repository.ReviewRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import mhl.gochariot.model.Review;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,12 +23,14 @@ public class ReviewService {
     }
 
     /**
-     * Finds all reviews in the database
+     * Finds all reviews in the database with pagination
      *
      * @return the review list
      */
-    public List getAllReviews() {
-        return ReviewRepository.findAll();
+    public Page<ReviewDTO> getAllReviews(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending());
+        return ReviewRepository.findAllReviewsWithUserNames(pageable);
+
     }
 
     /**
@@ -32,7 +40,7 @@ public class ReviewService {
      * @return the specified review
      */
     public Review getReviewById(int id) {
-        return ReviewRepository.findByReviewId(id);
+        return ReviewRepository.findById(id);
     }
 
     /**
@@ -51,8 +59,8 @@ public class ReviewService {
      * @param reviewId
      */
     public void deleteReview(int reviewId) {
-        if (ReviewRepository.existsByReviewId(reviewId)) {
-            ReviewRepository.deleteByReviewId(reviewId);
+        if (ReviewRepository.existsById(reviewId)) {
+            ReviewRepository.deleteById(reviewId);
         } else {
             // TODO
         }}

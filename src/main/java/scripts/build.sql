@@ -50,7 +50,7 @@ CREATE TABLE Student (
 );
 
 CREATE TABLE Login (
-                        LoginId SERIAL PRIMARY KEY,
+                        id SERIAL PRIMARY KEY,
                         UserId INTEGER REFERENCES Users(UserId),
                         LoginTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         IPAddress VARCHAR(50),
@@ -58,7 +58,7 @@ CREATE TABLE Login (
 );
 
 CREATE TABLE Review (
-                         ReviewId SERIAL PRIMARY KEY,
+                         id SERIAL PRIMARY KEY,
                          UserId INTEGER REFERENCES Users(UserId),
                          DriverId INTEGER REFERENCES Driver(DriverId),
                          Rating DECIMAL(3, 2) NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE Review (
 );
 
 CREATE TABLE Routes (
-                        RouteId SERIAL PRIMARY KEY,
+                        id SERIAL PRIMARY KEY,
                         DriverId INTEGER REFERENCES Driver(DriverId),
                         Name VARCHAR(255) NOT NULL,
                         StartPoint VARCHAR(255) NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE Routes (
 CREATE TYPE TargetAudience AS ENUM ('Driver', 'Admin', 'Student');
 
 CREATE TABLE Alert (
-                        AlertId SERIAL PRIMARY KEY,
+                        id SERIAL PRIMARY KEY,
                         UserId INTEGER REFERENCES Users(UserId),
                         Content TEXT,
                         Title TEXT,
@@ -88,7 +88,7 @@ CREATE TABLE Alert (
 );
 
 CREATE TABLE Request (
-                         RequestId SERIAL PRIMARY KEY,
+                         id SERIAL PRIMARY KEY,
                          PickUp VARCHAR(255) NOT NULL,
                          DropOff VARCHAR(255) NOT NULL,
                          UserId INTEGER REFERENCES Users(UserId),
