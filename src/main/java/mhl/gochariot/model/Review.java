@@ -7,45 +7,35 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NonNull;
 
+@Getter
+@Setter
 @Entity
-@Table(name = "Reviews")
+@Table(name = "Review")
 public class Review {
 
     @Id
-    @Getter
-    @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ReviewId")
     private Integer reviewId;
 
     @ManyToOne
-    @Getter
-    @Setter
     @NonNull
     @JoinColumn(name = "UserId", nullable = false)
     private User user;
 
     @ManyToOne
-    @Getter
-    @Setter
     @NonNull
     @JoinColumn(name = "DriverId", nullable = false)
     private Driver driver;
 
-    @Getter
-    @Setter
     @NonNull
     @Column(name = "Rating", nullable = false)
     private Double rating;
 
-    @Getter
-    @Setter
     @NonNull
     @Column(name = "Content")
     private String content;
-    
-    @Getter
-    @Setter
+
     @NonNull
     @Column(name = "CreatedAt", nullable = false)
     private Timestamp createdAt;

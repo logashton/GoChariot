@@ -58,9 +58,25 @@ public class User implements UserDetails {
     @Column(name = "LastName", nullable = false)
     private String lastName;
 
+    @NonNull
+    @Column(name = "AccountNonExpired", nullable = false)
+    private boolean accountNonExpired;
+
+    @NonNull
+    @Column(name = "AccountNonLocked", nullable = false)
+    private boolean accountNonLocked;
+
+    @NonNull
+    @Column(name = "CredentialsNonExpired", nullable = false)
+    private boolean credentialsNonExpired;
+
+    @NonNull
+    @Column(name = "Enabled", nullable = false)
+    private boolean enabled;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "UserRoles",
+            name = "UserRole",
             joinColumns = @JoinColumn(name = "UserId"),
             inverseJoinColumns = @JoinColumn(name = "RoleId")
     )
@@ -90,25 +106,23 @@ public class User implements UserDetails {
         return this.getPasswordHash();
     }
 
-
-    //todo: add these to the schema
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return this.accountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.accountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return this.credentialsNonExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.enabled;
     }
 }

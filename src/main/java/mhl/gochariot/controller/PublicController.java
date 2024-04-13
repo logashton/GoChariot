@@ -15,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Controller
 @RequestMapping("/")
 public class PublicController {
-    // todo: authentication redirects
     @GetMapping({"/home", "", "/index"})
     public String showHome() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -11,44 +11,45 @@ CREATE TABLE Users (
                        FirstName VARCHAR(255) NOT NULL,
                        LastName VARCHAR(255) NOT NULL,
                        CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                       UpdatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                       UpdatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                       AccountNonExpired BOOLEAN NOT NULL DEFAULT TRUE,
+                       AccountNonLocked BOOLEAN NOT NULL DEFAULT TRUE,
+                       CredentialsNonExpired BOOLEAN NOT NULL DEFAULT TRUE,
+                       Enabled BOOLEAN NOT NULL DEFAULT TRUE
 );
 
-CREATE TABLE Roles (
+CREATE TABLE Role (
                        RoleId SERIAL PRIMARY KEY,
                        RoleName VARCHAR(50) UNIQUE NOT NULL
 );
 
-INSERT INTO Roles (RoleName) VALUES ('Student'), ('Driver'), ('Admin');
+INSERT INTO Role (RoleName) VALUES ('Student'), ('Driver'), ('Admin');
 
-CREATE TABLE UserRoles (
+CREATE TABLE UserRole (
                            UserId INTEGER REFERENCES Users(UserId),
-                           RoleId INTEGER REFERENCES Roles(RoleId),
+                           RoleId INTEGER REFERENCES Role(RoleId),
                            PRIMARY KEY (UserId, RoleId)
 );
 
-CREATE TABLE Drivers (
+CREATE TABLE Driver (
                         DriverId SERIAL PRIMARY KEY,
                         UserId INTEGER UNIQUE REFERENCES Users(UserId),
                         HoursClocked INTEGER DEFAULT 0,
-                        Rides INTEGER DEFAULT 0,
-                        FullName VARCHAR(255) NOT NULL
+                        Rides INTEGER DEFAULT 0
 );
 
-CREATE TABLE Admins (
+CREATE TABLE Admin (
                        AdminId SERIAL PRIMARY KEY,
-                       UserId INTEGER UNIQUE REFERENCES Users(UserId),
-                       FullName VARCHAR(255) NOT NULL
+                       UserId INTEGER UNIQUE REFERENCES Users(UserId)
 );
 
-CREATE TABLE Students (
+CREATE TABLE Student (
                          StudentId SERIAL PRIMARY KEY,
                          UserId INTEGER UNIQUE REFERENCES Users(UserId),
-                         Rides INTEGER DEFAULT 0,
-                         FullName VARCHAR(255) NOT NULL
+                         Rides INTEGER DEFAULT 0
 );
 
-CREATE TABLE Logins (
+CREATE TABLE Login (
                         LoginId SERIAL PRIMARY KEY,
                         UserId INTEGER REFERENCES Users(UserId),
                         LoginTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -56,10 +57,10 @@ CREATE TABLE Logins (
                         UserAgent VARCHAR(255)
 );
 
-CREATE TABLE Reviews (
+CREATE TABLE Review (
                          ReviewId SERIAL PRIMARY KEY,
                          UserId INTEGER REFERENCES Users(UserId),
-                         DriverId INTEGER REFERENCES Drivers(DriverId),
+                         DriverId INTEGER REFERENCES Driver(DriverId),
                          Rating DECIMAL(3, 2) NOT NULL,
                          Content TEXT,
                          CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -67,7 +68,7 @@ CREATE TABLE Reviews (
 
 CREATE TABLE Routes (
                         RouteId SERIAL PRIMARY KEY,
-                        DriverId INTEGER REFERENCES Drivers(DriverId),
+                        DriverId INTEGER REFERENCES Driver(DriverId),
                         Name VARCHAR(255) NOT NULL,
                         StartPoint VARCHAR(255) NOT NULL,
                         EndPoint VARCHAR(255) NOT NULL,
@@ -77,7 +78,7 @@ CREATE TABLE Routes (
 
 CREATE TYPE TargetAudience AS ENUM ('Driver', 'Admin', 'Student');
 
-CREATE TABLE Alerts (
+CREATE TABLE Alert (
                         AlertId SERIAL PRIMARY KEY,
                         UserId INTEGER REFERENCES Users(UserId),
                         Content TEXT,
@@ -86,7 +87,7 @@ CREATE TABLE Alerts (
                         CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Requests (
+CREATE TABLE Request (
                          RequestId SERIAL PRIMARY KEY,
                          PickUp VARCHAR(255) NOT NULL,
                          DropOff VARCHAR(255) NOT NULL,

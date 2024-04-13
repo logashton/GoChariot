@@ -5,36 +5,26 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NonNull;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "Driver")
 public class Driver {
 
     @Id
-    @Getter
-    @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer driverId;
 
     @OneToOne
-    @Getter
-    @Setter
     @JoinColumn(name = "userId", unique = true)
     private User user;
 
-    @Getter
-    @Setter
     @NonNull
     private Integer hoursClocked;
 
-    @Getter
-    @Setter
     @NonNull
     private Integer rides;
 
-    @Getter
-    @Setter
-    @NonNull
-    private String fullName;
 
     @Override
     public String toString() {
@@ -42,7 +32,6 @@ public class Driver {
                 + "driverId=" + driverId
                 + ", hoursClocked=" + hoursClocked
                 + ", rides=" + rides
-                + ", fullName='" + fullName + '\''
                 + '}';
     }
 }

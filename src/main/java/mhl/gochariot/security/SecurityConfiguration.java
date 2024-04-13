@@ -28,8 +28,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/home", "/images/**", "/css/**").permitAll()
                         .requestMatchers("/student/**").hasAnyAuthority("Student")
-                        .requestMatchers("/driver/**").hasRole("DRIVER")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/driver/**").hasAnyAuthority("Driver")
+                        .requestMatchers("/admin/**").hasRole("Admin")
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form

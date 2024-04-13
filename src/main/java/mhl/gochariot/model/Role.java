@@ -11,15 +11,13 @@ import lombok.NonNull;
 @Getter
 @Setter
 @Entity
-@Table(name = "Roles")
+@Table(name = "Role")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long roleId;
 
     @NonNull
-    @Getter
-    @Setter
     @Column(unique = true, nullable = false)
     private String roleName;
 
