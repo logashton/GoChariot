@@ -1,82 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Reviews Page</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <th:block th:replace="fragments/base :: baseHead"></th:block>
 </head>
 <body>
+<div id="splash" th:style="'background-image: url(\'' + @{/images/chariot-students-splash-overlay0.3.jpg} + '\');'">
+    <th:block th:replace="fragments/navbar :: navbarContent"></th:block>
+</div>
 
-<h1>Reviews</h1>
 
-<div id="reviews-container">
+<h2>RECENT REVIEWS</h2>
+<hr class="yellow">
+
+<div class="profile-container" id="reviews-container">
 </div>
 
 <div id="pagination">
 </div>
+<div th:replace="fragments/footer :: footer"></div>
 
 <script>
     let currentPage = 0;
-    const pageSize = 10;
+    const pageSize = 2;
+
 
     const loadReviews = (page) => {
-        $.ajax({
-            url: `/api/reviews?page=${page}&size=${pageSize}`,
-            method: 'GET',
-            dataType: 'json',
-            success: function (data) {
+        fetch(`/api/reviews/all?page=${page}&size=${pageSize}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
                 displayReviews(data.content);
                 displayPagination(data.totalPages, page);
-            },
-            error: function (error) {
+            })
+            .catch(error => {
                 console.error('Error loading reviews:', error);
-            }
-        });
+            });
     };
 
     const displayReviews = (reviews) => {
-        const container = $('#reviews-container');
-        container.empty(); // Clear previous reviews
+        const container = document.getElementById('reviews-container');
+        container.innerHTML = '';
 
         reviews.forEach(review => {
             const reviewHtml = `
-                <div class="review">
-                    <h3>${review.firstName} ${review.lastName}</h3>
-                    <p>Rating: ${review.rating}</p>
-                    <p>${review.content}</p>
-                    <p>Created At: ${new Date(review.createdAt).toLocaleString()}</p>
+                <div class="profile-container">
+                    <h3 class="driver-name">${review.firstName} ${review.lastName} - Average Rating: ${calculateAverageRating(review.rating)}</h3><br>
+                    <div class="review">
+                        <div class="review-details">
+                            <span class="stars">${generateStarRating(review.rating)}</span> - ${review.username}
+                        </div>
+                        <div class="review-text">
+                            ${review.content}
+                        </div>
+                    </div>
+                    <br>
                 </div>
             `;
-            container.append(reviewHtml);
+            container.innerHTML += reviewHtml;
         });
     };
 
+    const generateStarRating = (rating) => {
+        const fullStars = '★'.repeat(Math.floor(rating));
+        const halfStar = (rating % 1) > 0 ? '☆' : '';
+        return fullStars + halfStar;
+    };
+
+    const calculateAverageRating = (rating) => {
+        return '★★★★★'.substring(0, Math.round(rating));
+    };
+
     const displayPagination = (totalPages, currentPage) => {
-        const pagination = $('#pagination');
-        pagination.empty();
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
 
         for (let i = 0; i < totalPages; i++) {
             const button = `
                 <button onclick="loadReviews(${i})" ${i === currentPage ? 'disabled' : ''}>${i + 1}</button>
             `;
-            pagination.append(button);
+            pagination.innerHTML += button;
         }
     };
-
-    // Initial load of reviews
     loadReviews(currentPage);
 </script>
 
-<style>
-    #reviews-container {
-        margin-bottom: 20px;
-    }
 
-    .review {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-bottom: 10px;
-    }
+<style>
 
     #pagination button {
         margin-right: 5px;
@@ -87,6 +101,5 @@
         cursor: not-allowed;
     }
 </style>
-
 </body>
 </html>
