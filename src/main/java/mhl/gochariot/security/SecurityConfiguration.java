@@ -27,9 +27,9 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/home", "/images/**", "/css/**", "/reviews", "/reviews?**", "/api/reviews/all").permitAll()
-                        .requestMatchers("/student/**").hasAnyAuthority("Student")
+                        .requestMatchers("/student/**", "/api/reviews/add").hasAnyAuthority("Student")
                         .requestMatchers("/driver/**").hasAnyAuthority("Driver")
-                        .requestMatchers("/admin/**").hasRole("Admin")
+                        .requestMatchers("/admin/**").hasAnyAuthority("Admin")
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form

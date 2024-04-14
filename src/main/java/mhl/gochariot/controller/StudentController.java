@@ -16,7 +16,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class StudentController {
 
     @GetMapping({"/", "/home", "/index", ""})
-    public String userHome() {
+    public String studentHome() {
         return "student/stu_index";
+    }
+
+    @GetMapping("/review")
+    public String studentReview() {
+        return "student/stu_review";
     }
 }

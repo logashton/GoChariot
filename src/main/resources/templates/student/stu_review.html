@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Review</title>
+    <th:block th:replace="fragments/base :: baseHead"></th:block>
+    <style>
+        .stars {
+            display: inline-block;
+        }
+
+        .star {
+            font-size: 24px;
+            color: gray;
+            cursor: pointer;
+        }
+
+        .star:hover,
+        .star:hover ~ .star {
+            color: gold;
+        }
+
+        .star.clicked,
+        .star.clicked ~ .star {
+            color: gold;
+        }
+    </style>
+</head>
+<body>
+<div id="splash" th:style="'background-image: url(\'' + @{/images/PIC30376-splash-edit-overlay0.3.jpg} + '\');'">
+    <th:block th:replace="fragments/student_navbar :: navbarContent"></th:block>
+</div>
+<main>
+    <section class="row">
+        <div class="column left">
+            <h2>ADD REVIEW</h2>
+            <hr class="yellow">
+            <div id="message"></div> <!-- Message container -->
+            <form id="reviewForm">
+                <div>
+                    <label for="driverFirstName">Driver First Name: </label>
+                    <input type="text" placeholder="Driver's first name" id="driverFirstName" name="driverFirstName" required>
+                </div>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <div>
+                    <label for="driverLastName">Driver Last Name: </label>
+                    <input type="text" placeholder="Driver's last name" id="driverLastName" name="driverLastName" required>
+                </div>
+                <div>
+                    <label for="rating_selection">Rating: </label>
+                    <div class="stars" id="rating_selection">
+                        <span class="star" data-value="1.0">☆</span>
+                        <span class="star" data-value="2.0">☆</span>
+                        <span class="star" data-value="3.0">☆</span>
+                        <span class="star" data-value="4.0">☆</span>
+                        <span class="star" data-value="5.0">☆</span>
+                    </div>
+                    <input type="hidden" name="rating" id="rating" value="">
+                </div>
+                <div>
+                    <textarea class="form-control" id="content" name="content" rows="3" placeholder="Enter review feedback" required></textarea>
+                </div>
+                <button type="button" id="submitButton">Submit</button>
+            </form>
+        </div>
+    </section>
+</main>
+
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('submitButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log("SUBMIT BUTTON PRESSED");
+
+            let formData = new FormData(document.getElementById('reviewForm'));
+
+            fetch('/api/reviews/add', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(error => Promise.reject(new Error(error)));
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('message').textContent = data;
+                })
+                .catch(error => {
+                    document.getElementById('message').textContent = error.message;
+                });
+        });
+        const stars = document.querySelectorAll('.star');
+        const selectedRating = document.getElementById('rating');
+
+        stars.forEach((star, index) => {
+            star.addEventListener('mouseover', () => {
+                for (let i = 0; i <= index; i++) {
+                    stars[i].textContent = '★';
+                }
+            });
+
+            star.addEventListener('mouseout', () => {
+                stars.forEach((star, i) => {
+                    star.textContent = i < Math.floor(selectedRating.value) ? '★' : '☆';
+                });
+            });
+
+            star.addEventListener('click', () => {
+                stars.forEach((star, i) => {
+                    if (i <= index) {
+                        star.textContent = '★';
+                    } else {
+                        star.textContent = '☆';
+                    }
+                });
+                selectedRating.value = index + 1;
+            });
+        });
+
+        const initialValue = parseFloat(selectedRating.value);
+        if (!isNaN(initialValue) && initialValue > 0 && initialValue <= 5) {
+            stars.forEach((star, index) => {
+                star.textContent = index < Math.floor(initialValue) ? '★' : '☆';
+                if (initialValue % 1 !== 0 && Math.floor(initialValue) === index) {
+                    star.textContent = '★';
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
