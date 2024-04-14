@@ -1,0 +1,125 @@
+// end points and example data they return
+
+/*  https://passiogo.com/mapGetData.php?bus=1&busId=11322&deviceId=45567185
+{
+  "theBus": {
+    "id": "11322",
+    "busId": "11322",
+    "name": "24",
+    "userId": "2874",
+    "paxLoad": "2",
+    "totalCap": 30,
+    "latitude": "36.061633033",
+    "longitude": "-79.817984933",
+    "routeBlockId": "77273",
+    "driver": "V. White",
+    "driverId": "20760",
+    "deviceId": "418568",
+    "speed": "3.138111111111111",
+    "lastSeen": "2024-04-14 19:46:23",
+    "routeName": "Sunday EB Route",
+    "color": "#a55194",
+    "routeId": "28958",
+    "outdated": 0,
+    "paxLoadS": "Not crowded (7%)"
+  },
+  "ETAs": []
+}
+*/
+
+/*
+https://passiogo.com/mapGetData.php?getBuses=1&deviceId=45567185&speed=1
+form data: {"s0":"2874","sA":1}
+{
+  "buses": {
+    "418527": [
+      {
+        "deviceId": 418527,
+        "created": "07:45 PM",
+        "createdTime": "07:45 PM",
+        "paxLoad": 10,
+        "bus": "01",
+        "busId": 11301,
+        "userId": "2874",
+        "routeBlockId": "77270",
+        "latitude": "36.068343383",
+        "longitude": "-79.815081217",
+        "calculatedCourse": "4.39681625078714",
+        "outOfService": 0,
+        "more": null,
+        "speed": "2.3664444444444444",
+        "totalCap": 30,
+        "color": "#d62728",
+        "busName": "01",
+        "busType": "Shuttle Bus",
+        "routeId": "28955",
+        "route": "Campus Loop",
+        "outdated": 0
+      }
+    ],
+    "418539": [
+      {
+        "deviceId": 418539,
+        "created": "07:45 PM",
+        "createdTime": "07:45 PM",
+        "paxLoad": 0,
+        "bus": "10",
+        "busId": 11308,
+        "userId": "2874",
+        "routeBlockId": "77269",
+        "latitude": "41.569312833",
+        "longitude": "-72.655891117",
+        "calculatedCourse": "63.434948822922024",
+        "outOfService": 0,
+        "more": null,
+        "totalCap": 30,
+        "color": "#1f77b4",
+        "busName": "10",
+        "busType": "Shuttle Bus",
+        "routeId": "28954",
+        "route": "Park & Ride",
+        "outdated": 0
+      }
+    ],
+    "418568": [
+      {
+        "deviceId": 418568,
+        "created": "07:45 PM",
+        "createdTime": "07:45 PM",
+        "paxLoad": 0,
+        "bus": "24",
+        "busId": 11322,
+        "userId": "2874",
+        "routeBlockId": "77273",
+        "latitude": "36.061737750",
+        "longitude": "-79.818583567",
+        "calculatedCourse": "270",
+        "outOfService": 0,
+        "more": null,
+        "totalCap": 30,
+        "color": "#a55194",
+        "busName": "24",
+        "busType": "Shuttle Bus",
+        "routeId": "28958",
+        "route": "Sunday EB Route",
+        "outdated": 0
+      }
+    ]
+  },
+  "excludedRoutes": [
+    -1
+  ],
+  "time": {
+    "2874": "07:45 PM"
+  }
+}
+*/
+
+/*
+need to connect to ws for live bus tracking
+
+wss://passio3.com/
+
+{"busId":11308,"latitude":41.56932,"longitude":-72.65589,"course":150.9,"paxLoad":0,"more":{}}
+{"subscribe":"location","userId":[2874],"filter":{"outOfService":0,"busId":[11301,11308,11322]},"field":["busId","latitude","longitude","course","paxLoad","more"]}
+*/
