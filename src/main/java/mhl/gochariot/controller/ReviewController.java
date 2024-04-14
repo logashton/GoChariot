@@ -43,11 +43,11 @@ public class ReviewController {
     public ResponseEntity<String> createReview(@ModelAttribute Review review) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
+
         User user = UserService.findByUsername(currentPrincipalName);
         review.setUser(user);
         review.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
-        System.out.println("REVIEW RECIVED: " + review.toString());
         Review savedReview = ReviewService.saveReview(review);
 
         if (savedReview != null) {
