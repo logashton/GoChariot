@@ -13,7 +13,9 @@ import java.util.Optional;
 
 public interface DriverNameRepository extends JpaRepository<DriverName, Integer> {
     @Query("SELECT NEW mhl.gochariot.service.DriverNameDTO(d.id, d.firstName, d.lastName, u.userId, d.firstSeen, d.lastSeen) FROM DriverName d LEFT JOIN d.driver u WHERE d.firstName = :firstName AND d.lastName = :lastName")
-    DriverNameDTO findByFirstAndLastName(@Param("firstName") String firstName, @Param("lastName") String lastName);
+    DriverNameDTO findByFirstAndLastNameDTO(@Param("firstName") String firstName, @Param("lastName") String lastName);
+
+    Optional<DriverName> findByFirstNameAndLastName(String firstName, String lastName);
 
     @Query("SELECT NEW mhl.gochariot.service.DriverNameDTO(d.id, d.firstName, d.lastName, u.userId, d.firstSeen, d.lastSeen) FROM DriverName d LEFT JOIN d.driver u")
     List<DriverNameDTO> findAllDriverNames();

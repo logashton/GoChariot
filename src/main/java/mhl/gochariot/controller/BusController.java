@@ -3,6 +3,10 @@ package mhl.gochariot.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import mhl.gochariot.model.DriverName;
+import mhl.gochariot.service.DriverNameDTO;
+import mhl.gochariot.service.DriverNameService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,9 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.Timestamp;
+import java.util.List;
+
 
 @RestController
 public class BusController {
+    @Autowired
+    DriverNameService driverNameService;
+
     RestTemplate restTemplate = new RestTemplate();
     ObjectMapper mapper = new ObjectMapper();
     String url = "https://passiogo.com/mapGetData.php?deviceId=45567185";
@@ -41,10 +51,47 @@ public class BusController {
         return root;
     }
 
+    // checks for unknown names to add to the DriverName table
+    public void driverWatchDog(JsonNode data) {
+        List<DriverNameDTO> knownDriverNames = driverNameService.findAllDriverNames();
+        String[] firstLastArr = data.get("theBus").get("driver").asText().split(" ");
+
+        boolean exists = knownDriverNames.stream()
+                .anyMatch(obj -> {
+                    try {
+                        String firstName = (String) obj.getClass().getMethod("getFirstName").invoke(obj);
+                        String lastName = (String) obj.getClass().getMethod("getLastName").invoke(obj);
+                        return firstLastArr[0].equals(firstName) && firstLastArr[1].equals(lastName);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                });
+
+        if (exists) {
+            driverNameService.updateLastSeen(
+                    firstLastArr[0],
+                    firstLastArr[1],
+                    new Timestamp(System.currentTimeMillis())
+            );
+        } else {
+            DriverName driverName = new DriverName();
+            driverName.setFirstName(firstLastArr[0]);
+            driverName.setLastName(firstLastArr[1]);
+            driverName.setFirstSeen(new Timestamp(System.currentTimeMillis()));
+            driverName.setLastSeen(new Timestamp(System.currentTimeMillis()));
+
+            driverNameService.saveDriverName(driverName);
+
+        }
+
+    }
+
     @GetMapping({"/api/bus/", "/api/bus/all", "/api/bus"})
     public ResponseEntity<?> requestAllBuses() {
         try {
-            return ResponseEntity.ok(requestBusAPI(url + "&getBuses=1&speed=1"));
+            JsonNode data = requestBusAPI(url + "&getBuses=1&speed=1");
+            return ResponseEntity.ok(data);
         } catch (JsonProcessingException e) {
             System.out.println("Error in /api/bus/all" + e);
             return ResponseEntity.badRequest().body("Error finding buses");
@@ -59,7 +106,9 @@ public class BusController {
         }
 
         try {
-            return ResponseEntity.ok(requestBusAPI(url + "&bus=1&speed=1&busId=" + busId));
+            JsonNode data = requestBusAPI(url + "&bus=1&speed=1&busId=" + busId);
+            driverWatchDog(data);
+            return ResponseEntity.ok(data);
         } catch (JsonProcessingException e) {
             System.out.println("Error in /api/bus/id" + e);
             return ResponseEntity.badRequest().body("Error finding bus");
