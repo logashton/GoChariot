@@ -23,10 +23,13 @@ public class Review {
     @JoinColumn(name = "UserId", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @NonNull
-    @JoinColumn(name = "DriverId", nullable = false)
-    private Driver driver;
+    @Column(name = "DriverFirstName", nullable = false)
+    private String driverFirstName;
+
+    @NonNull
+    @Column(name = "DriverLastName", nullable = false)
+    private String driverLastName;
 
     @NonNull
     @Column(name = "Rating", nullable = false)
@@ -43,9 +46,10 @@ public class Review {
     @Override
     public String toString() {
         return "Review{" +
-                "reviewId=" + id +
+                "id=" + id +
                 ", user=" + user +
-                ", driver=" + driver +
+                ", driverFirstName='" + driverFirstName + '\'' +
+                ", driverLastName='" + driverLastName + '\'' +
                 ", rating=" + rating +
                 ", content='" + content + '\'' +
                 ", createdAt=" + createdAt +

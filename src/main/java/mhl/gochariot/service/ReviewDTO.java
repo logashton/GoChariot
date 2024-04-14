@@ -8,17 +8,21 @@ import java.sql.Timestamp;
 @Setter
 public class ReviewDTO {
     private Integer id;
-    private String firstName;
-    private String lastName;
+    private String userFirstName;
+    private String userLastName;
+    private String driverFirstName;
+    private String driverLastName;
     private String username;
     private Double rating;
     private String content;
     private Timestamp createdAt;
 
-    public ReviewDTO(Integer id, String firstName, String lastName, String username, Double rating, String content, Timestamp createdAt) {
+    public ReviewDTO(Integer id, String firstName, String lastName, String driverFirstName, String driverLastName, String username, Double rating, String content, Timestamp createdAt) {
         this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.userFirstName = firstName;
+        this.userLastName = lastName;
+        this.driverFirstName = driverFirstName;
+        this.driverLastName = driverLastName;
         this.username = username;
         this.rating = rating;
         this.content = content;

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+
     <th:block th:replace="fragments/base :: baseHead"></th:block>
 </head>
 <body>
@@ -9,15 +9,16 @@
     <th:block th:replace="fragments/navbar :: navbarContent"></th:block>
 </div>
 
+<main>
+    <h2>RECENT REVIEWS</h2>
+    <hr class="yellow">
 
-<h2>RECENT REVIEWS</h2>
-<hr class="yellow">
+    <div class="profile-container" id="reviews-container">
+    </div>
 
-<div class="profile-container" id="reviews-container">
-</div>
-
-<div id="pagination">
-</div>
+    <div id="pagination">
+    </div>
+</main>
 <div th:replace="fragments/footer :: footer"></div>
 
 <script>
@@ -49,10 +50,10 @@
         reviews.forEach(review => {
             const reviewHtml = `
                 <div class="profile-container">
-                    <h3 class="driver-name">${review.firstName} ${review.lastName} - Average Rating: ${calculateAverageRating(review.rating)}</h3><br>
+                    <h3 class="driver-name">${review.driverFirstName} ${review.driverLastName} - Average Rating: ${calculateAverageRating(review.rating)}</h3><br>
                     <div class="review">
                         <div class="review-details">
-                            <span class="stars">${generateStarRating(review.rating)}</span> - ${review.username}
+                            <span class="stars">${generateStarRating(review.rating)}</span> - ${review.userFirstName}
                         </div>
                         <div class="review-text">
                             ${review.content}

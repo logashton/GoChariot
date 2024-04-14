@@ -60,7 +60,8 @@ CREATE TABLE Login (
 CREATE TABLE Review (
                          id SERIAL PRIMARY KEY,
                          UserId INTEGER REFERENCES Users(UserId),
-                         DriverId INTEGER REFERENCES Driver(DriverId),
+                         DriverFirstName VARCHAR(255) NOT NULL,
+                         DriverLastName VARCHAR(255) NOT NULL,
                          Rating DECIMAL(3, 2) NOT NULL,
                          Content TEXT,
                          CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
