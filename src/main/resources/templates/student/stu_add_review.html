@@ -30,6 +30,9 @@
 <div id="splash" th:style="'background-image: url(\'' + @{/images/PIC30376-splash-edit-overlay0.3.jpg} + '\');'">
     <th:block th:replace="fragments/student_navbar :: navbarContent"></th:block>
 </div>
+<div class="button-container">
+    <button onclick="redirectToReviewPage()">View Reviews</button>
+</div>
 <main>
     <section class="row">
         <div class="column left">
@@ -38,14 +41,15 @@
             <div id="message"></div>
             <form id="reviewForm">
                 <div>
-                    <label for="driverFirstName">Driver First Name: </label>
-                    <input type="text" placeholder="Driver's first name" id="driverFirstName" name="driverFirstName" required>
+                    <label for="driverName">Driver Name: </label>
+                    <select id="driverName" name="driverName" required>
+                        <option th:each="driverName : ${driverNameList}"
+                                th:value="${driverName.id}"
+                                th:text="${driverName.firstName + ' ' + driverName.lastName}">
+                        </option>
+                    </select>
                 </div>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <div>
-                    <label for="driverLastName">Driver Last Name: </label>
-                    <input type="text" placeholder="Driver's last name" id="driverLastName" name="driverLastName" required>
-                </div>
                 <div>
                     <label for="rating_selection">Rating: </label>
                     <div class="stars" id="rating_selection">
@@ -67,14 +71,21 @@
 </main>
 
 
+
 <script>
 
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('submitButton').addEventListener('click', function(e) {
             e.preventDefault();
-            console.log("SUBMIT BUTTON PRESSED");
+            console.log("first: " + document.getElementById('driverName').value);
+            const selectedDriverFullName = document.getElementById('driverName').options[document.getElementById('driverName').selectedIndex].text;
+            const [driverFirstName, driverLastName] = selectedDriverFullName.split(' ');
+            console.log('second: ' + selectedDriverFullName);
 
             let formData = new FormData(document.getElementById('reviewForm'));
+            formData.set('driverFirstName', driverFirstName);
+            formData.set('driverLastName', driverLastName);
+            formData.delete('driverName');
 
             fetch('/api/reviews/add', {
                 method: 'POST',
@@ -97,7 +108,7 @@
                 });
         });
         const stars = document.querySelectorAll('.star');
-        const selectedRating = document.getElementById('rating');
+        let selectedRating = document.getElementById('rating');
 
         stars.forEach((star, index) => {
             star.addEventListener('mouseover', () => {
@@ -134,6 +145,10 @@
             });
         }
     });
+
+    const redirectToReviewPage = () => {
+        window.location.href = 'review';
+    }
 </script>
 
 </body>

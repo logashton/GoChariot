@@ -28,7 +28,15 @@ public class ReviewController {
     @GetMapping({"/api/reviews/all", "/api/reviews/", "/api/reviews"})
     public Page<ReviewDTO> getAllReviews(
             @RequestParam(name = "page", defaultValue = "0") Integer pageNo,
-            @RequestParam(name = "size", defaultValue = "10") Integer pageSize) {
+            @RequestParam(name = "size", defaultValue = "4") Integer pageSize,
+            @RequestParam(name = "driverName", required = false) String driverName) {
+
+        if (driverName != null) {
+            String[] names = driverName.split(" ");
+            if (names.length == 2) {
+                return ReviewService.findReviewsByDriverName(names[0], names[1], pageNo, pageSize);
+            }
+        }
 
         return ReviewService.getAllReviews(pageNo, pageSize);
     }
@@ -41,6 +49,7 @@ public class ReviewController {
     
     @PostMapping("/api/reviews/add")
     public ResponseEntity<String> createReview(@ModelAttribute Review review) {
+        System.out.println(review.toString());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
 

@@ -33,6 +33,11 @@ public class ReviewService {
 
     }
 
+    public Page<ReviewDTO> findReviewsByDriverName(String firstName, String lastName, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending());
+        return ReviewRepository.findReviewsByDriverName(firstName, lastName, pageable);
+    }
+
     /**
      *
      *

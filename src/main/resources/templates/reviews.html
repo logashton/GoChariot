@@ -50,14 +50,16 @@
         reviews.forEach(review => {
             const reviewHtml = `
                 <div class="profile-container">
-                    <h3 class="driver-name">${review.driverFirstName} ${review.driverLastName} - Average Rating: ${calculateAverageRating(review.rating)}</h3><br>
+                    <h3 class="driver-name">${review.driverFirstName} ${review.driverLastName} - Rating: ${calculateAverageRating(review.rating)}</h3><br>
                     <div class="review">
-                        <div class="review-details">
-                            <span class="stars">${generateStarRating(review.rating)}</span> - ${review.userFirstName}
-                        </div>
                         <div class="review-text">
                             ${review.content}
                         </div>
+                        <br />
+                        <div class="review-details">
+                            - ${review.userFirstName}
+                        </div>
+
                     </div>
                     <br>
                 </div>

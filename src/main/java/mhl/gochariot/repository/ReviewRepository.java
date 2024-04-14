@@ -15,4 +15,7 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     void deleteById(int reviewId);
     @Query("SELECT new mhl.gochariot.service.ReviewDTO(r.id, u.firstName, u.lastName, r.driverFirstName, r.driverLastName, u.username, r.rating, r.content, r.createdAt) FROM Review r JOIN r.user u")
     Page<ReviewDTO> findAllReviewsWithUserNames(Pageable pageable);
+
+    @Query("SELECT new mhl.gochariot.service.ReviewDTO(r.id, u.firstName, u.lastName, r.driverFirstName, r.driverLastName, u.username, r.rating, r.content, r.createdAt) FROM Review r JOIN r.user u WHERE r.driverFirstName = ?1 AND r.driverLastName = ?2")
+    Page<ReviewDTO> findReviewsByDriverName(String firstName, String lastName, Pageable pageable);
 }
