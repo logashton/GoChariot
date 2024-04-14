@@ -95,3 +95,12 @@ CREATE TABLE Request (
                          UserId INTEGER REFERENCES Users(UserId),
                          RequestTime TIMESTAMP NOT NULL
 );
+
+CREATE TABLE DriverName (
+                        id SERIAL PRIMARY KEY,
+                        FirstName VARCHAR(255) NOT NULL,
+                        LastName VARCHAR(255) NOT NULL,
+                        UserId INTEGER REFERENCES Users(UserId) DEFAULT NULL,
+                        FirstSeen TIMESTAMP NOT NULL,
+                        LastSeen TIMESTAMP NOT NULL
+);

@@ -1,5 +1,6 @@
 package mhl.gochariot.controller;
 
+import mhl.gochariot.service.DriverNameService;
 import mhl.gochariot.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,9 +20,13 @@ public class PublicController {
     @Autowired
     ReviewService reviewService;
 
+    @Autowired
+    DriverNameService driverNameService;
+
     @GetMapping({"/home", "", "/index"})
     public String showHome() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(driverNameService.findAllDriverNames().toString());
 
         if (authentication != null) {
             System.out.println("Authenticated user: " + authentication.getName());

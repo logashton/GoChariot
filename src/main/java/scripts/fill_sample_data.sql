@@ -42,3 +42,8 @@ INSERT INTO Login (UserId, LoginTime, IPAddress, UserAgent) VALUES
 
 INSERT INTO Alert (UserId, Content, Title, TargetAudience, CreatedAt) VALUES
     (2, 'Example alert', 'Example alert title', 'Student', CURRENT_TIMESTAMP);
+
+INSERT INTO DriverName (FirstName, LastName, UserId, FirstSeen, LastSeen) VALUES
+    ('T.', 'Martin', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('B.', 'Briggs', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('J.', 'Snow', 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

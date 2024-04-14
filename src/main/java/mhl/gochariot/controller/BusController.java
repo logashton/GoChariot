@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class BusController {
     RestTemplate restTemplate = new RestTemplate();
     ObjectMapper mapper = new ObjectMapper();
-    // not sure what the point of deviceId is tbh
     String url = "https://passiogo.com/mapGetData.php?deviceId=45567185";
 
     public JsonNode requestBusAPI(String endpoint) throws JsonProcessingException {
