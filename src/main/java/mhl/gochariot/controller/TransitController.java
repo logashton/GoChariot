@@ -17,7 +17,6 @@ public class TransitController {
     RestTemplate restTemplate = new RestTemplate();
     ObjectMapper mapper = new ObjectMapper();
     String url = "https://store.transitstat.us/passio_go/uncg/";
-    HttpHeaders headers = new HttpHeaders();
 
     public JsonNode requestTransitAPI(String path) throws JsonProcessingException {
         String endpoint = url + path;

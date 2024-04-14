@@ -26,7 +26,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/home", "/images/**", "/css/**", "/reviews", "/reviews?**", "/api/reviews/all", "/api/transits**", "/api/transits","/api/transits/**").permitAll()
+                        .requestMatchers("/", "/home", "/images/**", "/css/**", "/js/**", "/reviews", "/reviews?**", "/api/reviews/all", "/api/transits**", "/api/transits","/api/transits/**", "/api/bus**", "/api/bus/**").permitAll()
                         .requestMatchers("/student/**", "/api/reviews/add").hasAnyAuthority("Student")
                         .requestMatchers("/driver/**").hasAnyAuthority("Driver")
                         .requestMatchers("/admin/**").hasAnyAuthority("Admin")
