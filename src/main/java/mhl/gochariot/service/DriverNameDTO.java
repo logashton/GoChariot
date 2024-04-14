@@ -24,4 +24,16 @@ public class DriverNameDTO {
         this.firstSeen = firstSeen;
         this.lastSeen = lastSeen;
     }
+
+    @Override
+    public String toString() {
+        return "DriverNameDTO{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", userId=" + userId +
+                ", firstSeen=" + firstSeen +
+                ", lastSeen=" + lastSeen +
+                '}';
+    }
 }

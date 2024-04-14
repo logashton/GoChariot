@@ -16,11 +16,11 @@ public class DriverNameService {
     @Autowired
     DriverNameRepository DriverNameRepository;
 
-    public Object[] findDriverByFirstLast(String firstName, String lastName) {
+    public DriverNameDTO findDriverByFirstLast(String firstName, String lastName) {
         return DriverNameRepository.findByFirstAndLastName(firstName, lastName);
     }
 
-    public List<Object[]> findAllDriverNames() {
+    public List<DriverNameDTO> findAllDriverNames() {
         return DriverNameRepository.findAllDriverNames();
     }
 }

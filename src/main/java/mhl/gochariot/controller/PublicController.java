@@ -1,5 +1,6 @@
 package mhl.gochariot.controller;
 
+import mhl.gochariot.service.DriverNameDTO;
 import mhl.gochariot.service.DriverNameService;
 import mhl.gochariot.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/")
 public class PublicController {
@@ -26,7 +29,6 @@ public class PublicController {
     @GetMapping({"/home", "", "/index"})
     public String showHome() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(driverNameService.findAllDriverNames().toString());
 
         if (authentication != null) {
             System.out.println("Authenticated user: " + authentication.getName());
