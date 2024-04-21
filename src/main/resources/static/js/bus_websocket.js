@@ -8,13 +8,27 @@ async function addMarkerPopup(id) {
         busInfo = await busInfo.json();
 
         const contentString = `
-                <div>
-                    <h3>Bus: ${busInfo.theBus.busId}</h3>
-                    <p>Driver: ${busInfo.theBus.driver}</p>
-                    <p>speed: ${busInfo.theBus.speed}</p>
-                    <p>PAX Load: ${busInfo.theBus.paxLoadS}</p>
-                </div>
-            `;
+    <div style="font-size: 18px; width:auto; max-width: 800px; max-height:400; overflow-x:hidden;">
+        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <div style="display: flex; align-items: center;">
+                <img src="/images/bus_white.png" alt="" style="width: 30px; height: 30px; background: ${busInfo.theBus.color}; border-radius: 50%;">
+                <span style="font-weight: bold; margin-left: 10px;">${busInfo.theBus.name}</span>
+            </div>
+        </div>
+        <div style="display: flex; flex-direction: column; padding-left: 10px;">
+            <p>Route: ${busInfo.theBus.routeName}</p>
+            <p>Driver: ${busInfo.theBus.driver}</p>
+            <p>Rating: todo</p>
+            <p>Speed: ${Math.floor(busInfo.theBus.speed)} mph</p>
+            <p>Load: ${busInfo.theBus.paxLoadS}</p>
+            <button onclick="">Request ride</button>
+            <button onclick="">View Reviews</button>
+        </div>
+    </div>
+`;
+
+
+
 
         const infoWindow = new google.maps.InfoWindow({
             content: contentString,
@@ -160,10 +174,12 @@ async function initMap() {
         addMarkerPopup(busId);
     }
 
+
+    // todo: make this actually close when all buses have appeared
     setTimeout(() => {
         loadingOverlay.close();
         loadingOverlay = null;
-    }, 1555);
+    }, 5005);
 
 
 }

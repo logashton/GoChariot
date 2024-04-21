@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
@@ -36,6 +38,10 @@ public class ReviewService {
     public Page<ReviewDTO> findReviewsByDriverName(String firstName, String lastName, int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending());
         return ReviewRepository.findReviewsByDriverName(firstName, lastName, pageable);
+    }
+
+    public Optional<Double> avgReviewsByName(String firstName, String lastName) {
+        return ReviewRepository.avgRatingByFirstNameAndLastName(firstName, lastName);
     }
 
     /**

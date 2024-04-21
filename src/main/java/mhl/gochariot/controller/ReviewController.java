@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import mhl.gochariot.service.ReviewService;
 import mhl.gochariot.model.Review;
 import java.sql.Timestamp;
+import java.util.Optional;
 
 
 @RestController
@@ -70,5 +71,19 @@ public class ReviewController {
     public String deleteReview(@PathVariable int id) {
         ReviewService.deleteReview(id);
         return "TODO";
+    }
+
+    @GetMapping("/api/reviews/average")
+    public ResponseEntity<?> findAvgByName(
+            @RequestParam(name = "driverName", required = true) String driverName
+    ) {
+        String[] firstLastArr = driverName.split(" ");
+        Optional<Double> avg = ReviewService.avgReviewsByName(firstLastArr[0], firstLastArr[1]);
+
+        if (avg.isPresent()) {
+            return ResponseEntity.ok(avg);
+        } else {
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reviews not found for driver");
+        }
     }
 }
