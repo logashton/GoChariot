@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <th:block th:replace="fragments/base :: baseHead"></th:block>
+    <script th:src="@{/js/bus_websocket.js}"></script>
+</head>
+<body>
+<div id="splash" th:style="'background-image: url(\'' + @{/images/campus-splash-overlay0.3.jpg} + '\');'">
+    <th:block th:replace="fragments/student_navbar :: navbarContent"></th:block>
+</div>
+
+<main>
+    <section class="row">
+        <div class="column left">
+            <h2>LIVE MAP</h2>
+            <hr class="yellow">
+            <div id="map"></div>
+        </div>
+
+        <div class="column right">
+            <div class="right-block">
+                <h2>BUS SCHEDULE</h2>
+                <hr class="yellow">
+                <p><b>Monday-Friday</b>: 7:30 AM-12:30 AM</p>
+                <p><b>Saturday</b>: 5:30 PM-12:30 AM</p>
+                <p><b>Sunday</b>: 3:30 PM-12:30 AM</p>
+            </div>
+            <br>
+            <div class="right-block">
+                <h2>BUS STOPS</h2>
+                <hr class="yellow">
+                <p><b>1. College Ave</b><br>Next Bus: 5 min away</p>
+                <p><b>2. Walker Circle</b><br>Next Bus: 10 min away</p>
+                <p><b>3. Spartan Village</b><br>Next Bus: 13 min away</p>
+            </div>
+        </div>
+
+    </section>
+</main>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

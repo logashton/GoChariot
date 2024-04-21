@@ -31,4 +31,9 @@ public class StudentController {
                 driverNameService.findAllDriverNames());
         return "student/stu_add_review";
     }
+
+    @GetMapping("/tracker")
+    public String studentTracker() {
+        return "student/stu_track";
+    }
 }
