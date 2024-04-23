@@ -60,6 +60,21 @@
   const loadReviews = (page, driverName = null) => {
     let url = `/api/reviews/all?page=${page}&size=${pageSize}`;
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramDriverName = urlParams.get('driverName');
+
+    if (paramDriverName) {
+      driverName = paramDriverName;
+      console.log('param: ', driverName);
+      const dropdown = document.getElementById('driverName');
+      for (let i = 0; i < dropdown.options.length; i++) {
+        if (dropdown.options[i].text === paramDriverName) {
+          dropdown.selectedIndex = i;
+          break;
+        }
+      }
+    }
+
     if (driverName) {
       url += `&driverName=${encodeURIComponent(driverName)}`;
     }

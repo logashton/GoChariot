@@ -14,6 +14,10 @@ const calculateAverageRating = (rating) => {
 };
 
 
+function redirectToReviews(driverName) {
+    window.location.href = `review?driverName=${encodeURIComponent(driverName)}`;
+}
+
 // thanks passiogo
 function drawBusIconAndMarker(busname,buscolor,calculatedCourse,paxLoad){
     return rotateColorBusMarkerCircleBig(busname,buscolor,calculatedCourse,paxLoad);
@@ -40,7 +44,7 @@ function rotateColorBusMarkerCircleBig(busname,buscolor,calculatedCourse,paxLoad
     tintCtx.clearRect(0, 0, 60, 60);
     tintCtx.save();
     tintCtx.translate(tintCanvas[0].width/2,tintCanvas[0].height/2);
-    var alpha=(calculatedCourse-90.0-90.0)*2.0*Math.PI/365.0;
+    let alpha=(calculatedCourse-90.0-90.0)*2.0*Math.PI/365.0;
     tintCtx.rotate(alpha);
     tintCtx.fillStyle = buscolor;
     tintCtx.imageSmoothingEnabled = true;
@@ -101,7 +105,7 @@ async function addMarkerPopup(id) {
             <p>Speed: ${Math.floor(busInfo.theBus.speed)} mph</p>
             <p>Load: ${busInfo.theBus.paxLoadS}</p>
             <button onclick="">Request ride</button>
-            <button onclick="">View Reviews</button>
+            <button onclick="redirectToReviews('${busInfo.theBus.driver}')">View Reviews</button>
         </div>
     </div>
     `;
