@@ -1,11 +1,91 @@
 const wsUrl = 'wss://passio3.com/';
 let buses = {};
 let map;
+let circle_big_w_arrow;
+let busIconDefImg;
+let Canvas;
+let Ctx;
+let tintCanvas;
+let tintCtx;
+
+
+const calculateAverageRating = (rating) => {
+    return '★★★★★'.substring(0, Math.round(rating));
+};
+
+
+// thanks passiogo
+function drawBusIconAndMarker(busname,buscolor,calculatedCourse,paxLoad){
+    return rotateColorBusMarkerCircleBig(busname,buscolor,calculatedCourse,paxLoad);
+}
+function rotateColorBusMarkerCircleBig(busname,buscolor,calculatedCourse,paxLoad){
+    if (!circle_big_w_arrow) {
+        Canvas = $("#canvas");
+        Ctx = Canvas[0].getContext("2d");
+        tintCanvas = $("#tintCanvas");
+        console.log('ctx: ' + Ctx);
+        tintCtx = tintCanvas[0].getContext('2d');
+        circle_big_w_arrow = new Image(Canvas[0].width, Canvas[0].height);
+        circle_big_w_arrow.src = $("#circle_big_w_arrow").attr("src");
+        console.log(" Canvas.width=" + Canvas[0].width + ", Canvas.height=" + Canvas[0].height + ', src=' + $("#circle_big_w_arrow").attr("src") + ', img w/h=' + circle_big_w_arrow.width + '/' + circle_big_w_arrow.height);
+    }
+
+    if (!busIconDefImg) {
+        busIconDefImg = new Image(Canvas[0].width * 0.33, Canvas[0].height * 0.33)
+        busIconDefImg.src = $("#busIconDefImg").attr("src");
+    }
+
+    Ctx.clearRect(0, 0, 60, 60);
+
+    tintCtx.clearRect(0, 0, 60, 60);
+    tintCtx.save();
+    tintCtx.translate(tintCanvas[0].width/2,tintCanvas[0].height/2);
+    var alpha=(calculatedCourse-90.0-90.0)*2.0*Math.PI/365.0;
+    tintCtx.rotate(alpha);
+    tintCtx.fillStyle = buscolor;
+    tintCtx.imageSmoothingEnabled = true;
+    tintCtx.fillRect(-tintCanvas[0].width/2,-tintCanvas[0].height/2,tintCanvas[0].width,tintCanvas[0].height);
+    tintCtx.globalCompositeOperation = "destination-atop";
+    tintCtx.drawImage(circle_big_w_arrow, -tintCanvas[0].width/2,-tintCanvas[0].height/2,tintCanvas[0].width,tintCanvas[0].height);
+    tintCtx.globalCompositeOperation = "source-over";
+    tintCtx.restore();
+    Ctx.drawImage(tintCanvas[0],0,0);
+
+    var circleRadius=Canvas[0].width*(0.3-(+paxLoad/1000));
+    var arcX=Canvas[0].width/2;
+    var arcY=Canvas[0].height/2;
+    Ctx.beginPath();
+    Ctx.arc(arcX,arcY,circleRadius, 0, 2 * Math.PI, false);
+    Ctx.fillStyle = 'white';
+    Ctx.fill();
+
+
+    tintCtx.clearRect(0, 0, 60, 60);
+    tintCtx.fillStyle = buscolor;
+    tintCtx.fillRect(0,0,tintCanvas[0].width,tintCanvas[0].height);
+    tintCtx.globalCompositeOperation = "destination-atop";
+    tintCtx.drawImage(busIconDefImg, 0,0,busIconDefImg.width,busIconDefImg.height);
+    tintCtx.globalCompositeOperation = "source-over";
+    Ctx.drawImage(tintCanvas[0],(Canvas[0].width-busIconDefImg.width)/2,(Canvas[0].height-busIconDefImg.height)/2);
+
+    return [Canvas[0].toDataURL("image/png"),Canvas[0].width/2,Canvas[0].height/2];
+}
 
 async function addMarkerPopup(id) {
     buses[id].addListener('click', async () => {
         let busInfo = await fetch('/api/bus/id/' + id);
         busInfo = await busInfo.json();
+
+        let driverInfo = await fetch(
+            '/api/reviews/average?driverName=' + busInfo.theBus.driver
+        )
+
+        let reviewRating = "No reviews";
+
+        console.log(driverInfo);
+        if (driverInfo.status != 404) {
+            reviewRating = calculateAverageRating(await driverInfo.text());
+        }
 
         const contentString = `
     <div style="font-size: 18px; width:auto; max-width: 800px; max-height:400; overflow-x:hidden;">
@@ -17,15 +97,14 @@ async function addMarkerPopup(id) {
         </div>
         <div style="display: flex; flex-direction: column; padding-left: 10px;">
             <p>Route: ${busInfo.theBus.routeName}</p>
-            <p>Driver: ${busInfo.theBus.driver}</p>
-            <p>Rating: todo</p>
+            <p>Driver: ${busInfo.theBus.driver} (${reviewRating})</p>
             <p>Speed: ${Math.floor(busInfo.theBus.speed)} mph</p>
             <p>Load: ${busInfo.theBus.paxLoadS}</p>
             <button onclick="">Request ride</button>
             <button onclick="">View Reviews</button>
         </div>
     </div>
-`;
+    `;
 
 
 
@@ -37,6 +116,38 @@ async function addMarkerPopup(id) {
         infoWindow.open(map, buses[id]);
 
     });
+}
+
+async function addMarkers() {
+    let loadingOverlay = new google.maps.InfoWindow({
+        content: 'Loading Bus Locations...',
+        position: map.getCenter(),
+    });
+    loadingOverlay.open(map);
+
+    let fetchedBuses = await getBuses(true);
+    for (const [busId, busInfo] of Object.entries(fetchedBuses)) {
+        console.log('creating new pin frmo init', busId, busInfo);
+        console.log('BUS INFO: ', busInfo[0]);
+        console.log('THE BUSES ID: ' + busInfo[0].busId);
+        buses[busInfo[0].busId] = new google.maps.Marker({
+            position: new google.maps.LatLng(busInfo[0].latitude, busInfo[0].longitude),
+            map: map,
+            shape: {
+                type: 'circle',
+                coords: [0, 0, 60]
+            },
+            icon: {
+                url: '/images/favicon.png',
+                scaledSize: new google.maps.Size(27, 27),
+            },
+            title: 'Bus: ' + busInfo[0].busId,
+        });
+        addMarkerPopup(busInfo[0].busId);
+        buses[busInfo[0].busId].color = busInfo[0].color;
+    }
+
+    loadingOverlay.close();
 }
 
 async function initMap() {
@@ -147,69 +258,48 @@ async function initMap() {
         streetViewControl: false
     });
 
-    let loadingOverlay = new google.maps.InfoWindow({
-        content: 'Loading Bus Locations...',
-        position: map.getCenter(),
-    });
-    loadingOverlay.open(map);
+    await addMarkers();
 
-    let fetchedBuses = await getBuses(true);
+    let styles = [
+        {
+            "featureType": "poi.business",
+            "elementType": "labels",
+            "stylers": [
+                {"visibility": "off"}
+            ]
+        },
+        {
+            "featureType": "poi.park",
+            "elementType": "labels",
+            "stylers": [
+                {"visibility": "off"}
+            ]
+        }
+    ];
 
-    for (const [busId, busInfo] of Object.entries(fetchedBuses)) {
-        console.log('creating new pin frmo init', busId, busInfo);
-        buses[busId] = new google.maps.Marker({
-            position: {lat: busInfo.latitude, lng: busInfo.longitude},
-            map: map,
-            shape: {
-                type: 'circle',
-                coords: [0, 0, 60]
-            },
-            icon: {
-                url: '/images/favicon.png',
-                scaledSize: new google.maps.Size(32, 32)
-            },
-            title: 'Bus: ' + busInfo.busId,
-        });
-
-        addMarkerPopup(busId);
-    }
-
-
-    // todo: make this actually close when all buses have appeared
-    setTimeout(() => {
-        loadingOverlay.close();
-        loadingOverlay = null;
-    }, 5005);
+    map.setOptions({styles: styles});
 
 
 }
 
-function updatePin(id, latitude, longitude, course, pax) {
+async function updatePin(id, latitude, longitude, course, pax) {
     let newLatLng = new google.maps.LatLng(latitude, longitude);
+    let myIcon= {
+        size: new google.maps.Size(44,44),
+        scaledSize: new google.maps.Size(44, 44)
+    };
 
     if (id in buses) {
         let distance = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(buses[id].getPosition()), new google.maps.LatLng(newLatLng));
         distance<10 || distance>300 ? buses[id].setPosition(newLatLng) : buses[id].animateTo(newLatLng,{duration: 9000});
+        let ico = await drawBusIconAndMarker(id,buses[id].color,course,pax);
+        console.log('icon properties in update:', id,buses[id].color,course,pax);
+        myIcon.url=ico[0]
+        myIcon.anchor=new google.maps.Point(ico[1],ico[2])
+        buses[id].setIcon(myIcon);
     } else {
         console.log('trying to create new pin');
-        buses[id] = new google.maps.Marker({
-            position: newLatLng,
-            map: map,
-            shape: {
-                type: 'circle',
-                coords: [0, 0, 60]
-            },
-            animation: google.maps.Animation.DROP,
-            icon: {
-                url: "/images/favicon.png",
-                scaledSize: new google.maps.Size(32, 32)
-            },
-            title: 'Bus: ' + id,
-        });
-
-        addMarkerPopup(id);
-
-
+        console.log(buses);
     }
 
 }
@@ -283,8 +373,6 @@ async function fetchDataAndConnect() {
     }
 }
 
-fetchDataAndConnect();
-
 function loadScript() {
     let script = document.createElement('script');
     script.type = 'text/javascript';
@@ -293,6 +381,9 @@ function loadScript() {
 }
 
 window.onload = loadScript;
+
+fetchDataAndConnect();
+
 
 
 
