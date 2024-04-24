@@ -105,7 +105,7 @@ async function addMarkerPopup(id) {
             <p>Speed: ${Math.floor(busInfo.theBus.speed)} mph</p>
             <p>Load: ${busInfo.theBus.paxLoadS}</p>
             <button onclick="">Request ride</button>
-            <button onclick="redirectToReviews('${busInfo.theBus.driver}')">View Reviews</button>
+            <button onclick="redirectToReviews('${busInfo.theBus.driver}', '${busInfo.theBus.driverId}')">View Reviews</button>
         </div>
     </div>
     `;

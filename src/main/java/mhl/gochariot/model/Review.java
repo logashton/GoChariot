@@ -31,6 +31,10 @@ public class Review {
     @Column(name = "DriverLastName", nullable = false)
     private String driverLastName;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DriverIdPGO")
+    private DriverName driverIdPGO;
+
     @NonNull
     @Column(name = "Rating", nullable = false)
     private Double rating;
@@ -50,6 +54,7 @@ public class Review {
                 ", user=" + user +
                 ", driverFirstName='" + driverFirstName + '\'' +
                 ", driverLastName='" + driverLastName + '\'' +
+                ", driverIdPGO=" + driverIdPGO +
                 ", rating=" + rating +
                 ", content='" + content + '\'' +
                 ", createdAt=" + createdAt +

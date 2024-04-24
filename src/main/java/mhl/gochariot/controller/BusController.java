@@ -54,28 +54,25 @@ public class BusController {
     // checks for unknown names to add to the DriverName table
     public void driverWatchDog(JsonNode data) {
         List<DriverNameDTO> knownDriverNames = driverNameService.findAllDriverNames();
+        Integer driverId = data.get("theBus").get("driverId").asInt();
         String[] firstLastArr = data.get("theBus").get("driver").asText().split(" ");
+        boolean exists = false;
 
-        boolean exists = knownDriverNames.stream()
-                .anyMatch(obj -> {
-                    try {
-                        String firstName = (String) obj.getClass().getMethod("getFirstName").invoke(obj);
-                        String lastName = (String) obj.getClass().getMethod("getLastName").invoke(obj);
-                        return firstLastArr[0].equals(firstName) && firstLastArr[1].equals(lastName);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return false;
-                    }
-                });
+        for (DriverNameDTO driverNameDTO : knownDriverNames) {
+            if (driverNameDTO.getDriverIDPGO().equals(driverId)) {
+                exists = true;
+                break;
+            }
+        }
 
         if (exists) {
             driverNameService.updateLastSeen(
-                    firstLastArr[0],
-                    firstLastArr[1],
+                    driverId,
                     new Timestamp(System.currentTimeMillis())
             );
         } else {
             DriverName driverName = new DriverName();
+            driverName.setDriverIdPGO(driverId);
             driverName.setFirstName(firstLastArr[0]);
             driverName.setLastName(firstLastArr[1]);
             driverName.setFirstSeen(new Timestamp(System.currentTimeMillis()));

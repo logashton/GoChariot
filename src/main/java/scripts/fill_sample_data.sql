@@ -7,6 +7,11 @@ INSERT INTO Users (Email, PasswordHash, PasswordSalt, UserName, FirstName, LastN
                                                                                                                ('student2@email.com', '$2a$12$TIvVq2oqroUVOGHRE1FZ4.mQhABSQvU4xDZSJzoAWn6mHUN4C1qty', 'a', 'student2', 'Jason', 'Smith', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
                                                                                                                ('driver2@email.com', '$2a$12$TIvVq2oqroUVOGHRE1FZ4.mQhABSQvU4xDZSJzoAWn6mHUN4C1qty', 'a', 'driver2', 'Jon', 'Snow', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
+INSERT INTO DriverName (FirstName, LastName, UserId, FirstSeen, LastSeen) VALUES
+                                                                              ('R.', 'Bridges', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+                                                                              ('J.', 'Doe', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+                                                                              ('J.', 'Snow', 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
 INSERT INTO UserRole (UserId, RoleId) VALUES
                                            (1, 1),
                                            (2, 2),
@@ -16,21 +21,21 @@ INSERT INTO UserRole (UserId, RoleId) VALUES
 
 INSERT INTO Student (UserId, Rides) VALUES (1, 5), (4, 3);
 
-INSERT INTO Driver (UserId, HoursClocked, Rides) VALUES (2, 5, 15), (5, 7, 25);
+INSERT INTO Driver (UserId, HoursClocked, Rides, DriverIDPGO) VALUES (2, 5, 15, 1), (5, 7, 25, NULL);
 
 INSERT INTO Admin (UserId) VALUES (3);
 
-INSERT INTO Routes (DriverId, Name, StartPoint, EndPoint, StartTime, EndTime) VALUES
-                                                                                  (1, 'Example loop A', 'Point A', 'Point B', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-                                                                                  (1, 'Example loop B', 'Point C', 'Point D', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-                                                                                  (1, 'Example loop C', 'Point E', 'Point F', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+--INSERT INTO Routes (DriverId, Name, StartPoint, EndPoint, StartTime, EndTime) VALUES
+                                                                                  --(1, 'Example loop A', 'Point A', 'Point B', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+                                                                                  --(1, 'Example loop B', 'Point C', 'Point D', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+                                                                                  --(1, 'Example loop C', 'Point E', 'Point F', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-INSERT INTO Review (UserId, DriverFirstName, DriverLastName, Rating, Content, CreatedAt) VALUES
-    (1, 'Jane', 'Doe', 4.5, 'Example review', CURRENT_TIMESTAMP),
-    (4, 'Jon', '/><script>alert(''xss test'');</script>', 1, 'Epic review', CURRENT_TIMESTAMP),
-    (4, 'Jane', 'Doe', 0, 'Awesome review', CURRENT_TIMESTAMP),
-    (1, 'Jane', 'Doe', 5, 'Cool review asdfklj', CURRENT_TIMESTAMP),
-    (4, 'Jon', 'Snow', 3.5, 'Slightly cooler review', CURRENT_TIMESTAMP);
+INSERT INTO Review (UserId, DriverFirstName, DriverLastName, DriverIDPGO, Rating, Content, CreatedAt) VALUES
+    (1, 'J.', 'Doe', 2, 4.5, 'Example review', CURRENT_TIMESTAMP),
+    (4, 'J.', 'Doe', 2, 1, '/><script>alert(''xss test'');</script>', CURRENT_TIMESTAMP),
+    (4, 'J.', 'Doe', 2, 1, 'Bad review...', CURRENT_TIMESTAMP),
+    (1, 'R.', 'Bridges', 1, 5, 'Cool review asdfklj', CURRENT_TIMESTAMP),
+    (4, 'J.', 'Snow', 3, 3, 'Slightly less cooler review', CURRENT_TIMESTAMP);
 
 
 
@@ -42,8 +47,3 @@ INSERT INTO Login (UserId, LoginTime, IPAddress, UserAgent) VALUES
 
 INSERT INTO Alert (UserId, Content, Title, TargetAudience, CreatedAt) VALUES
     (2, 'Example alert', 'Example alert title', 'Student', CURRENT_TIMESTAMP);
-
-INSERT INTO DriverName (FirstName, LastName, UserId, FirstSeen, LastSeen) VALUES
-    ('T.', 'Martin', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('B.', 'Briggs', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('J.', 'Snow', 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

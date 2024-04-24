@@ -44,7 +44,7 @@
                     <label for="driverName">Driver Name: </label>
                     <select id="driverName" name="driverName" required>
                         <option th:each="driverName : ${driverNameList}"
-                                th:value="${driverName.id}"
+                                th:value="${driverName.driverIDPGO}"
                                 th:text="${driverName.firstName + ' ' + driverName.lastName}">
                         </option>
                     </select>
@@ -80,11 +80,13 @@
             console.log("first: " + document.getElementById('driverName').value);
             const selectedDriverFullName = document.getElementById('driverName').options[document.getElementById('driverName').selectedIndex].text;
             const [driverFirstName, driverLastName] = selectedDriverFullName.split(' ');
+            const selectedDriverIdPGO = document.getElementById('driverName').options[document.getElementById('driverName').selectedIndex].value;
             console.log('second: ' + selectedDriverFullName);
 
             let formData = new FormData(document.getElementById('reviewForm'));
             formData.set('driverFirstName', driverFirstName);
             formData.set('driverLastName', driverLastName);
+            formData.set('driverIdPGO', selectedDriverIdPGO);
             formData.delete('driverName');
 
             fetch('/api/reviews/add', {

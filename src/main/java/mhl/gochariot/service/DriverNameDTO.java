@@ -9,17 +9,19 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 public class DriverNameDTO {
-    private Integer id;
+    private Integer driverIDPGO;
     private String firstName;
     private String lastName;
+    private Integer driverIdPGO;
     private Integer userId;
     private Timestamp firstSeen;
     private Timestamp lastSeen;
 
-    public DriverNameDTO(Integer id, String firstName, String lastName, Integer userId, Timestamp firstSeen,  Timestamp lastSeen) {
-        this.id = id;
+    public DriverNameDTO(Integer driverIdPGO, String firstName, String lastName, Integer userId, Timestamp firstSeen,  Timestamp lastSeen) {
+        this.driverIDPGO = driverIdPGO;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.driverIdPGO = driverIDPGO;
         this.userId = userId;
         this.firstSeen = firstSeen;
         this.lastSeen = lastSeen;
@@ -28,7 +30,7 @@ public class DriverNameDTO {
     @Override
     public String toString() {
         return "DriverNameDTO{" +
-                "id=" + id +
+                "driverIDPGO=" + driverIDPGO +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", userId=" + userId +

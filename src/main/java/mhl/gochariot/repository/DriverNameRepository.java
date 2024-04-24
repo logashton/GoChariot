@@ -12,11 +12,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DriverNameRepository extends JpaRepository<DriverName, Integer> {
-    @Query("SELECT NEW mhl.gochariot.service.DriverNameDTO(d.id, d.firstName, d.lastName, u.userId, d.firstSeen, d.lastSeen) FROM DriverName d LEFT JOIN d.driver u WHERE d.firstName = :firstName AND d.lastName = :lastName")
+    @Query("SELECT NEW mhl.gochariot.service.DriverNameDTO(d.driverIdPGO, d.firstName, d.lastName, u.userId, d.firstSeen, d.lastSeen) FROM DriverName d LEFT JOIN d.driver u WHERE d.firstName = :firstName AND d.lastName = :lastName")
     DriverNameDTO findByFirstAndLastNameDTO(@Param("firstName") String firstName, @Param("lastName") String lastName);
 
     Optional<DriverName> findByFirstNameAndLastName(String firstName, String lastName);
 
-    @Query("SELECT NEW mhl.gochariot.service.DriverNameDTO(d.id, d.firstName, d.lastName, u.userId, d.firstSeen, d.lastSeen) FROM DriverName d LEFT JOIN d.driver u")
+    @Query("SELECT NEW mhl.gochariot.service.DriverNameDTO(d.driverIdPGO, d.firstName, d.lastName, u.userId, d.firstSeen, d.lastSeen) FROM DriverName d LEFT JOIN d.driver u")
     List<DriverNameDTO> findAllDriverNames();
+
+    Optional<DriverName> findBydriverIdPGO(Integer driverIdPGO);
 }

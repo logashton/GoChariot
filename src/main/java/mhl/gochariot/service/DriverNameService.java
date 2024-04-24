@@ -28,11 +28,8 @@ public class DriverNameService {
         return driverNameRepository.save(driverName);
     }
 
-    public void updateLastSeen(String firstName, String lastName, Timestamp lastSeen) {
-        Optional<DriverName> optionalDriverName = driverNameRepository.findByFirstNameAndLastName(
-                firstName,
-                lastName
-        );
+    public void updateLastSeen(Integer id, Timestamp lastSeen) {
+        Optional<DriverName> optionalDriverName = driverNameRepository.findBydriverIdPGO(id);
 
         if (optionalDriverName.isPresent()) {
             DriverName driverName = optionalDriverName.get();

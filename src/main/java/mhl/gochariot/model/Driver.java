@@ -19,19 +19,24 @@ public class Driver {
     @JoinColumn(name = "userId", unique = true)
     private User user;
 
+    @OneToOne
+    @JoinColumn(name = "driverIDPGO", unique = true)
+    private DriverName driverIdPGO;
+
     @NonNull
     private Integer hoursClocked;
 
     @NonNull
     private Integer rides;
 
-
     @Override
     public String toString() {
-        return "Driver{"
-                + "driverId=" + driverId
-                + ", hoursClocked=" + hoursClocked
-                + ", rides=" + rides
-                + '}';
+        return "Driver{" +
+                "driverId=" + driverId +
+                ", user=" + user +
+                ", driverIdPGO=" + driverIdPGO +
+                ", hoursClocked=" + hoursClocked +
+                ", rides=" + rides +
+                '}';
     }
 }

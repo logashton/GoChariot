@@ -30,13 +30,10 @@ public class ReviewController {
     public Page<ReviewDTO> getAllReviews(
             @RequestParam(name = "page", defaultValue = "0") Integer pageNo,
             @RequestParam(name = "size", defaultValue = "4") Integer pageSize,
-            @RequestParam(name = "driverName", required = false) String driverName) {
+            @RequestParam(name = "driverId", required = false) Integer driverId) {
 
-        if (driverName != null) {
-            String[] names = driverName.split(" ");
-            if (names.length == 2) {
-                return ReviewService.findReviewsByDriverName(names[0], names[1], pageNo, pageSize);
-            }
+        if (driverId != null) {
+                return ReviewService.findReviewsByDriverIdPGO(driverId, pageNo, pageSize);
         }
 
         return ReviewService.getAllReviews(pageNo, pageSize);
@@ -75,10 +72,9 @@ public class ReviewController {
 
     @GetMapping("/api/reviews/average")
     public ResponseEntity<?> findAvgByName(
-            @RequestParam(name = "driverName", required = true) String driverName
+            @RequestParam(name = "driverId", required = true) Integer driverId
     ) {
-        String[] firstLastArr = driverName.split(" ");
-        Optional<Double> avg = ReviewService.avgReviewsByName(firstLastArr[0], firstLastArr[1]);
+        Optional<Double> avg = ReviewService.avgReviewsByDriverIdPGO(driverId);
 
         if (avg.isPresent()) {
             return ResponseEntity.ok(avg);

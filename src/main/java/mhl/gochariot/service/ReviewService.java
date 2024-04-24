@@ -40,8 +40,17 @@ public class ReviewService {
         return ReviewRepository.findReviewsByDriverName(firstName, lastName, pageable);
     }
 
+    public Page<ReviewDTO> findReviewsByDriverIdPGO(Integer id, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending());
+        return ReviewRepository.findReviewByDriverIdPGO(id, pageable);
+    }
+
     public Optional<Double> avgReviewsByName(String firstName, String lastName) {
         return ReviewRepository.avgRatingByFirstNameAndLastName(firstName, lastName);
+    }
+
+    public Optional<Double> avgReviewsByDriverIdPGO(Integer id) {
+        return ReviewRepository.avgRatingByDriverIdPGO(id);
     }
 
     /**

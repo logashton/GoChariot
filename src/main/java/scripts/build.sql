@@ -18,6 +18,15 @@ CREATE TABLE Users (
                        Enabled BOOLEAN NOT NULL DEFAULT TRUE
 );
 
+CREATE TABLE DriverName (
+                            DriverIdPGO SERIAL PRIMARY KEY,
+                            FirstName VARCHAR(255) NOT NULL,
+                            LastName VARCHAR(255) NOT NULL,
+                            UserId INTEGER REFERENCES Users(UserId) DEFAULT NULL,
+                            FirstSeen TIMESTAMP NOT NULL,
+                            LastSeen TIMESTAMP NOT NULL
+);
+
 CREATE TABLE Role (
                        RoleId SERIAL PRIMARY KEY,
                        RoleName VARCHAR(50) UNIQUE NOT NULL
@@ -35,7 +44,8 @@ CREATE TABLE Driver (
                         DriverId SERIAL PRIMARY KEY,
                         UserId INTEGER UNIQUE REFERENCES Users(UserId),
                         HoursClocked INTEGER DEFAULT 0,
-                        Rides INTEGER DEFAULT 0
+                        Rides INTEGER DEFAULT 0,
+                        DriverIdPGO INTEGER UNIQUE REFERENCES DriverName(DriverIdPGO) DEFAULT NULL
 );
 
 CREATE TABLE Admin (
@@ -62,6 +72,7 @@ CREATE TABLE Review (
                          UserId INTEGER REFERENCES Users(UserId),
                          DriverFirstName VARCHAR(255) NOT NULL,
                          DriverLastName VARCHAR(255) NOT NULL,
+                         DriverIdPGO INTEGER REFERENCES DriverName(DriverIdPGO),
                          Rating DECIMAL(3, 2) NOT NULL,
                          Content TEXT,
                          CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -94,13 +105,4 @@ CREATE TABLE Request (
                          DropOff VARCHAR(255) NOT NULL,
                          UserId INTEGER REFERENCES Users(UserId),
                          RequestTime TIMESTAMP NOT NULL
-);
-
-CREATE TABLE DriverName (
-                        id SERIAL PRIMARY KEY,
-                        FirstName VARCHAR(255) NOT NULL,
-                        LastName VARCHAR(255) NOT NULL,
-                        UserId INTEGER REFERENCES Users(UserId) DEFAULT NULL,
-                        FirstSeen TIMESTAMP NOT NULL,
-                        LastSeen TIMESTAMP NOT NULL
 );

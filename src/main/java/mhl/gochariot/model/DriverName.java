@@ -14,8 +14,8 @@ import lombok.NonNull;
 public class DriverName {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "DriverIDPGO")
+    private Integer driverIdPGO;
 
     @NonNull
     @Column(name = "FirstName")
@@ -40,7 +40,7 @@ public class DriverName {
     @Override
     public String toString() {
         return "DriverName{" +
-                "id=" + id +
+                "driverIdPGO=" + driverIdPGO +
                 ", firstName='" + firstName + '\'' +
                 ", LastName='" + lastName + '\'' +
                 ", driver=" + driver +
