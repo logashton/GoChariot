@@ -58,7 +58,9 @@ public class BusController {
         String[] firstLastArr = data.get("theBus").get("driver").asText().split(" ");
         boolean exists = false;
 
+        System.out.println("found driver with id: " + driverId);
         for (DriverNameDTO driverNameDTO : knownDriverNames) {
+            System.out.println("comparing against known: " + driverNameDTO.getDriverIDPGO());
             if (driverNameDTO.getDriverIDPGO().equals(driverId)) {
                 exists = true;
                 break;
@@ -66,6 +68,7 @@ public class BusController {
         }
 
         if (exists) {
+            System.out.println("updating last seen");
             driverNameService.updateLastSeen(
                     driverId,
                     new Timestamp(System.currentTimeMillis())

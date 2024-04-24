@@ -55,6 +55,13 @@ public class ReviewController {
         review.setUser(user);
         review.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
+        if (ReviewService.driverAlreadyReviewedByUser(
+                review.getDriverIdPGO().getDriverIdPGO(),
+                review.getUser().getUserId())
+        ) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Driver already reviewed");
+        }
+
         Review savedReview = ReviewService.saveReview(review);
 
         if (savedReview != null) {

@@ -13,7 +13,6 @@ import lombok.NonNull;
 @Table(name = "DriverName")
 public class DriverName {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "DriverIDPGO")
     private Integer driverIdPGO;
 

@@ -28,6 +28,9 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query("SELECT new mhl.gochariot.service.ReviewDTO(r.id, u.firstName, u.lastName, r.driverFirstName, r.driverLastName, dn.driverIdPGO, u.username, r.rating, r.content, r.createdAt) FROM Review r JOIN r.user u JOIN r.driverIdPGO dn WHERE dn.driverIdPGO = ?1")
     Page<ReviewDTO> findReviewByDriverIdPGO(Integer id, Pageable pageable);
 
-    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.driverIdPGO = ?1")
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.driverIdPGO.driverIdPGO = ?1")
     Optional<Double> avgRatingByDriverIdPGO(Integer id);
+
+    @Query("SELECT COUNT(r) FROM Review r WHERE r.driverIdPGO.driverIdPGO = :driverIdPGOId AND r.user.userId = :userId")
+    int countReviewsByDriverIdPGOAndUser(Integer driverIdPGOId, Integer userId);
 }

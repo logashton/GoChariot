@@ -19,7 +19,7 @@ CREATE TABLE Users (
 );
 
 CREATE TABLE DriverName (
-                            DriverIdPGO SERIAL PRIMARY KEY,
+                            DriverIdPGO INTEGER PRIMARY KEY,
                             FirstName VARCHAR(255) NOT NULL,
                             LastName VARCHAR(255) NOT NULL,
                             UserId INTEGER REFERENCES Users(UserId) DEFAULT NULL,

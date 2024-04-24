@@ -53,6 +53,11 @@ public class ReviewService {
         return ReviewRepository.avgRatingByDriverIdPGO(id);
     }
 
+    public boolean driverAlreadyReviewedByUser(Integer driverIdPGO, Integer userId) {
+        int count = ReviewRepository.countReviewsByDriverIdPGOAndUser(driverIdPGO, userId);
+        return count > 0;
+    }
+
     /**
      *
      *

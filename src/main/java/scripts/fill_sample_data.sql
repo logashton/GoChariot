@@ -7,10 +7,10 @@ INSERT INTO Users (Email, PasswordHash, PasswordSalt, UserName, FirstName, LastN
                                                                                                                ('student2@email.com', '$2a$12$TIvVq2oqroUVOGHRE1FZ4.mQhABSQvU4xDZSJzoAWn6mHUN4C1qty', 'a', 'student2', 'Jason', 'Smith', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
                                                                                                                ('driver2@email.com', '$2a$12$TIvVq2oqroUVOGHRE1FZ4.mQhABSQvU4xDZSJzoAWn6mHUN4C1qty', 'a', 'driver2', 'Jon', 'Snow', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-INSERT INTO DriverName (FirstName, LastName, UserId, FirstSeen, LastSeen) VALUES
-                                                                              ('R.', 'Bridges', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-                                                                              ('J.', 'Doe', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-                                                                              ('J.', 'Snow', 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO DriverName (DriverIdPGO, FirstName, LastName, UserId, FirstSeen, LastSeen) VALUES
+                                                                              (1, 'R.', 'Bridges', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+                                                                              (2, 'J.', 'Doe', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+                                                                              (3, 'J.', 'Snow', 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO UserRole (UserId, RoleId) VALUES
                                            (1, 1),

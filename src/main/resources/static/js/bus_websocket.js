@@ -15,7 +15,7 @@ const calculateAverageRating = (rating) => {
 
 
 function redirectToReviews(driverName) {
-    window.location.href = `review?driverName=${encodeURIComponent(driverName)}`;
+    window.location.href = `review?driverId=${encodeURIComponent(driverName)}`;
 }
 
 // thanks passiogo
@@ -80,8 +80,11 @@ async function addMarkerPopup(id) {
         let busInfo = await fetch('/api/bus/id/' + id);
         busInfo = await busInfo.json();
 
+        console.log('the bus: '+ busInfo.theBus);
+        console.log(busInfo);
+
         let driverInfo = await fetch(
-            '/api/reviews/average?driverName=' + busInfo.theBus.driver
+            '/api/reviews/average?driverId=' + busInfo.theBus.driverId
         )
 
         let reviewRating = "No reviews";
@@ -105,7 +108,7 @@ async function addMarkerPopup(id) {
             <p>Speed: ${Math.floor(busInfo.theBus.speed)} mph</p>
             <p>Load: ${busInfo.theBus.paxLoadS}</p>
             <button onclick="">Request ride</button>
-            <button onclick="redirectToReviews('${busInfo.theBus.driver}', '${busInfo.theBus.driverId}')">View Reviews</button>
+            <button onclick="redirectToReviews('${busInfo.theBus.driverId}')">View Reviews</button>
         </div>
     </div>
     `;
