@@ -22,11 +22,17 @@ public class SecurityConfiguration {
     @Autowired
     UserService userService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/home", "/images/**", "/css/**", "/js/**", "/reviews", "/reviews?**", "/api/reviews/average", "/api/reviews/all", "/api/transits**", "/api/transits","/api/transits/**", "/api/bus**", "/api/bus/**").permitAll()
+                        .requestMatchers("/", "/home", "/images/**", "/css/**", "/js/**",
+                                "/reviews", "/reviews?**", "/api/reviews/average", "/api/reviews/all",
+                                "/api/transits**", "/api/transits","/api/transits/**",
+                                "/api/bus**", "/api/bus/**", "/signup").permitAll()
                         .requestMatchers("/student/**", "/api/reviews/add").permitAll()//.hasAnyAuthority("Student")
                         .requestMatchers("/driver/**").hasAnyAuthority("Driver")
                         .requestMatchers("/admin/**").hasAnyAuthority("Admin")
@@ -37,14 +43,20 @@ public class SecurityConfiguration {
                         .permitAll()
                 )
                 .userDetailsService(userService)
-                .logout(LogoutConfigurer::permitAll);
+                .logout(logout -> logout
+                        .logoutUrl("/signout")
+                        .logoutSuccessUrl("/") // Redirect to this URL after logout
+                        .permitAll()
+                );
 
         return http.build();
     }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userService)
+                .passwordEncoder(passwordEncoder);
     }
+
 
 }

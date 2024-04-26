@@ -15,7 +15,7 @@ import lombok.NonNull;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long roleId;
+    private Integer roleId;
 
     @NonNull
     @Column(unique = true, nullable = false)
