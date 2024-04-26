@@ -12,7 +12,52 @@ let tintCtx;
 let stopsMarkers = {};
 let routePaths = [];
 let stopsToRoutes = {};
+let userMarker;
 
+function updateLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            const userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+            };
+
+            const heading = position.coords.heading;
+
+            if (!userMarker) {
+                userMarker = new google.maps.Marker({
+                    position: userLocation,
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                        scale: 5,
+                        fillColor: "#007AFF",
+                        fillOpacity: 0.75,
+                        strokeWeight: 2,
+                        strokeColor: "#fbfffa",
+                        strokeOpacity: 0.75,
+                        rotation: heading,
+                    },
+                });
+            } else {
+                userMarker.setPosition(userLocation);
+                userMarker.setIcon({
+                    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                    scale: 5,
+                    fillColor: "#007aff",
+                    fillOpacity: 0.75,
+                    strokeColor: "#fbfffa",
+                    strokeOpacity: 0.75,
+                    strokeWeight: 2,
+                    rotation: heading,
+                });
+            }
+
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
 
 
 async function findBusStops() {
@@ -45,7 +90,6 @@ async function createStopRoutesMap() {
 
 async function initPolyLines() {
     let lines = await findBusStops();
-
 
     for (const [routeId, routePath] of Object.entries(lines.routePoints)) {
         let targetRoute = lines.routes[routeId];
@@ -456,6 +500,8 @@ async function initMap() {
         streetViewControl: false
     });
 
+    updateLocation();
+    setInterval(updateLocation, 5000);
     await createStopRoutesMap();
     console.log('VALUE AFTER STOP ROUTES:', stopsToRoutes);
     await addMarkers();
