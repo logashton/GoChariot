@@ -7,13 +7,10 @@ let Canvas;
 let Ctx;
 let tintCanvas;
 let tintCtx;
-let stops = [];
+let stops = {};
 let routePaths = [];
 
 
-async function findBusStops() {
-    let stops = await fetch('/api/transits?path=')
-}
 
 async function findBusStops() {
     let polyLines = await fetch('/api/bus/stops');
@@ -201,6 +198,38 @@ async function addMarkerPopup(id) {
     });
 }
 
+async function addStops() {
+    let stops = await findBusStops();
+    console.log('stops', stops.stops);
+
+    for (const [stopId, stop] of Object.entries(stops.stops)) {
+        console.log('asdfasdfasdf', stops.routes[stop.routeId][1], stop.latitude);
+        stops[stop.id] = new google.maps.Marker({
+            position: new google.maps.LatLng(stop.latitude, stop.longitude),
+            icon: {
+                path: 'M-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0',
+                scale: 1.5, //25012024 :7,
+                fillColor: "#FFFFFF",
+                fillOpacity: 1,
+                strokeColor: stops.routes[stop.routeId][1],
+                strokeOpacity: 1,
+                strokeWeight:3,
+                labelOrigin: new google.maps.Point(0, 2)
+            },
+            /*visible:true,
+            zIndex: 3,
+            stopId: stop.stopId,
+            id: stop.stopId,
+            routeId: stop.routeId,
+            //snippet: JSON.stringify(theStop),*/
+            title: stop.name,
+            label:{text:" ",color: "#0000ffaa",fontSize: "11px"},
+        });
+
+        stops[stop.id].setMap(map);
+    }
+}
+
 async function addMarkers() {
     let loadingOverlay = new google.maps.InfoWindow({
         content: 'Loading Bus Locations...',
@@ -350,6 +379,7 @@ async function initMap() {
     });
 
     await addMarkers();
+    await addStops();
     await initPolyLines();
 
     let styles = [
