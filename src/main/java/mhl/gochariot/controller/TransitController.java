@@ -23,7 +23,6 @@ public class TransitController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("User-Agent", "Contact: log4shton@proton.me | github.com/logashton");
-
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(endpoint, HttpMethod.GET, entity, String.class);
@@ -38,7 +37,8 @@ public class TransitController {
 
 
 
-    // path can be trains, lines, or stops
+
+    // path can be trains, lines, or stations
     @GetMapping("/api/transits")
     public ResponseEntity<?> requestTransits(@RequestParam(required = false) String path) {
         if (path == null || path.trim().isEmpty()) {
@@ -51,9 +51,7 @@ public class TransitController {
             System.out.println("Error in /api/transits/trains: " + e);
             return ResponseEntity.badRequest().body("Error finding transits");
         }
-
     }
-
 
 
 }

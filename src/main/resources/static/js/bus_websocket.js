@@ -7,22 +7,55 @@ let Canvas;
 let Ctx;
 let tintCanvas;
 let tintCtx;
+let stops = [];
+let routePaths = [];
 
 
-const calculateAverageRating = (rating) => {
+async function findBusStops() {
+    let stops = await fetch('/api/transits?path=')
+}
+
+async function findBusStops() {
+    let polyLines = await fetch('/api/bus/stops');
+    return await polyLines.json();
+}
+
+function calculateAverageRating(rating) {
     return '★★★★★'.substring(0, Math.round(rating));
-};
+}
 
 
 function redirectToReviews(driverName) {
     window.location.href = `review?driverId=${encodeURIComponent(driverName)}`;
 }
 
+async function initPolyLines() {
+    let lines = await findBusStops();
+    console.log(lines.routePoints);
+
+    for (const [routeId, routePath] of Object.entries(lines.routePoints)) {
+        let targetRoute = lines.routes[routeId];
+        let points = routePath[0].map((point) => {
+            return new google.maps.LatLng(point.lat, point.lng);
+        });
+        console.log(points);
+        drawRoutePointsPart(
+            points,
+            false,
+            targetRoute[1],
+            routeId,
+            '123'
+        );
+    }
+
+}
+
 // thanks passiogo
-function drawBusIconAndMarker(busname,buscolor,calculatedCourse,paxLoad){
+function drawBusIconAndMarker(busname, buscolor, calculatedCourse, paxLoad){
     return rotateColorBusMarkerCircleBig(busname,buscolor,calculatedCourse,paxLoad);
 }
-function rotateColorBusMarkerCircleBig(busname,buscolor,calculatedCourse,paxLoad){
+
+function rotateColorBusMarkerCircleBig(busname, buscolor, calculatedCourse, paxLoad){
     if (!circle_big_w_arrow) {
         Canvas = $("#canvas");
         Ctx = Canvas[0].getContext("2d");
@@ -73,6 +106,49 @@ function rotateColorBusMarkerCircleBig(busname,buscolor,calculatedCourse,paxLoad
     Ctx.drawImage(tintCanvas[0],(Canvas[0].width-busIconDefImg.width)/2,(Canvas[0].height-busIconDefImg.height)/2);
 
     return [Canvas[0].toDataURL("image/png"),Canvas[0].width/2,Canvas[0].height/2];
+}
+
+function getRouteArrow(routeColor, opacity){
+    return {
+        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+        scale:4,
+        strokeColor:"#ffffff",
+        strokeWeight:0.5,
+        fillColor:routeColor,
+        fillOpacity:opacity*0.6
+    }
+}
+
+function drawRoutePointsPart(points,outdated,routeColor,routeId,routeGroupId){
+    console.log('IN DRAW ROUTE', routeColor, routeId);
+    //console.log("drawRoutePointsPart(routeId="+routeId+"): outdated="+outdated+", routeColor="+routeColor)
+    if (!points || !points.length) return;
+    //let opacity=getRouteOpacity({routeId:routeId,routeGroupId:routeGroupId})*(outdated?0.75:1.0);//outdated returned 01122021, commented //24092021djd
+    //let strokeWeight=opacity==newRouteUIdimmedOpacity ? newRouteUIdimmedWeight : 5;
+    let opacity = 0.7;
+    let strokeWeight = 1;
+    //console.log("drawRoutePointsPart(routeId="+routeId+"), opacity="+opacity+", strokeWeight="+strokeWeight);
+    if (points.length>0){
+        let flightPath = new google.maps.Polyline({
+            path: points,
+            visible:true,
+            geodesic: false,
+            clickable:false,
+            strokeColor: routeColor,
+            strokeOpacity: opacity,
+            strokeWeight: strokeWeight,
+            routeId: routeId,
+            routeGroupId:routeGroupId,
+            icons: [{
+                icon:getRouteArrow(routeColor, opacity),
+                repeat:'200px',
+                path:[]
+            }]
+        });
+        flightPath.setMap(map);
+        routePaths.push(flightPath);
+        //console.log("drawStopMarkers: added routeId="+routePaths[routePaths.length-1].routeId);
+    }
 }
 
 async function addMarkerPopup(id) {
@@ -245,10 +321,18 @@ async function initMap() {
         animateStep(this, (new Date()).getTime());
     }
 
+    google.maps.Polyline.prototype.getBounds = function() {
+        var bounds = new google.maps.LatLngBounds();
+        this.getPath().forEach(function(item, index) {
+            bounds.extend(new google.maps.LatLng(item.lat(), item.lng()));
+        });
+        return bounds;
+    };
+
     let center = {lat: 36.06865390159834, lng: -79.8107065341785};
     map = new google.maps.Map(document.getElementById('map'), {
         center: center,
-        zoom: 15,
+        zoom: 15.5,
         options: {
             gestureHandling: 'greedy',
             useStaticMap: false
@@ -266,6 +350,7 @@ async function initMap() {
     });
 
     await addMarkers();
+    await initPolyLines();
 
     let styles = [
         {

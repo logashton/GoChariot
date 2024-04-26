@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import mhl.gochariot.model.DriverName;
 import mhl.gochariot.service.DriverNameDTO;
 import mhl.gochariot.service.DriverNameService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,6 @@ public class BusController {
     String url = "https://passiogo.com/mapGetData.php?deviceId=45567185";
 
     public JsonNode requestBusAPI(String endpoint) throws JsonProcessingException {
-
         HttpHeaders headers = new HttpHeaders();
         // might change this later to just use a randomly generated user-agent
         headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36");
@@ -49,6 +49,30 @@ public class BusController {
 
 
         return root;
+    }
+
+    public JsonNode requestStopsApi() throws JsonProcessingException {
+        String endpoint = "https://passiogo.com/mapGetData.php?getStops=2&deviceId=45567185&withOutdated=1&wBounds=1&buildNo=110&showBusInOos=0&lat=36.0665102&lng=-79.436621";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36");
+        headers.set("Origin", "https://passiogo.com");
+        headers.set("Referer", "https://passiogo.com/");
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+
+        String jsonData = "{\"s0\":\"2874\",\"sA\":1}";
+
+        HttpEntity<String> entity = new HttpEntity<>(jsonData, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(endpoint, HttpMethod.POST, entity, String.class);
+
+        String jsonInfo = response.getBody();
+        JsonNode root = mapper.readTree(jsonInfo);
+        System.out.println("JSON ROOT STOPS: " + root);
+
+
+        return root;
+
     }
 
     // checks for unknown names to add to the DriverName table
@@ -114,5 +138,16 @@ public class BusController {
             return ResponseEntity.badRequest().body("Error finding bus");
         }
 
+    }
+
+    @GetMapping("/api/bus/stops")
+    public ResponseEntity<?> requestBusStops() {
+        try {
+            JsonNode data = requestStopsApi();
+            return ResponseEntity.ok(data);
+        } catch (JsonProcessingException e) {
+            System.out.println("Erorr in /api/bus/stops" + e);
+            return ResponseEntity.badRequest().body("Error finding stops");
+        }
     }
 }
