@@ -1,4 +1,5 @@
 const wsUrl = 'wss://passio3.com/';
+// bus markers <id, map marker>
 let buses = {};
 let map;
 let circle_big_w_arrow;
@@ -7,8 +8,10 @@ let Canvas;
 let Ctx;
 let tintCanvas;
 let tintCtx;
-let stops = {};
+// stop markers <id, map marker>
+let stopsMarkers = {};
 let routePaths = [];
+let stopsToRoutes = {};
 
 
 
@@ -26,22 +29,36 @@ function redirectToReviews(driverName) {
     window.location.href = `review?driverId=${encodeURIComponent(driverName)}`;
 }
 
+async function createStopRoutesMap() {
+    let data = await fetch('/api/transits?path=lines');
+    data = await data.json();
+    for (const [id, stopInfo] of Object.entries(data)) {
+        stopInfo.stations.forEach(station => {
+            if (stopsToRoutes.hasOwnProperty(station)) {
+                stopsToRoutes[station].push(id);
+            } else {
+                stopsToRoutes[station] = [id];
+            }
+        });
+    }
+}
+
 async function initPolyLines() {
     let lines = await findBusStops();
-    console.log(lines.routePoints);
+
 
     for (const [routeId, routePath] of Object.entries(lines.routePoints)) {
         let targetRoute = lines.routes[routeId];
         let points = routePath[0].map((point) => {
             return new google.maps.LatLng(point.lat, point.lng);
         });
-        console.log(points);
         drawRoutePointsPart(
             points,
             false,
             targetRoute[1],
             routeId,
-            '123'
+            '123',
+            targetRoute[0]
         );
     }
 
@@ -116,8 +133,8 @@ function getRouteArrow(routeColor, opacity){
     }
 }
 
-function drawRoutePointsPart(points,outdated,routeColor,routeId,routeGroupId){
-    console.log('IN DRAW ROUTE', routeColor, routeId);
+function drawRoutePointsPart(points,outdated,routeColor,routeId,routeGroupId, routeName){
+    console.log('IN DRAW ROUTE', routeColor, routeId, routeName);
     //console.log("drawRoutePointsPart(routeId="+routeId+"): outdated="+outdated+", routeColor="+routeColor)
     if (!points || !points.length) return;
     //let opacity=getRouteOpacity({routeId:routeId,routeGroupId:routeGroupId})*(outdated?0.75:1.0);//outdated returned 01122021, commented //24092021djd
@@ -135,6 +152,7 @@ function drawRoutePointsPart(points,outdated,routeColor,routeId,routeGroupId){
             strokeOpacity: opacity,
             strokeWeight: strokeWeight,
             routeId: routeId,
+            routeName: routeName,
             routeGroupId:routeGroupId,
             icons: [{
                 icon:getRouteArrow(routeColor, opacity),
@@ -146,6 +164,39 @@ function drawRoutePointsPart(points,outdated,routeColor,routeId,routeGroupId){
         routePaths.push(flightPath);
         //console.log("drawStopMarkers: added routeId="+routePaths[routePaths.length-1].routeId);
     }
+}
+
+async function stopMarkerPopup(stopId) {
+    let routes = await fetch('/api/transits?path=lines');
+    routes = await routes.json();
+
+    //let routes
+    let contentString = `
+    <div style="font-size: 18px; width:auto; max-width: 800px; max-height:400; overflow-x:hidden;">
+        <span><img src="/images/roadstop.png"></span><div style="display: inline; font-size: 16px; font-weight: bold;">${stopsMarkers[stopId].stopName}</div>
+        <hr class="yellow">
+        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+    `;
+
+    stopsToRoutes[stopId].forEach(routeId => {
+        contentString += `
+            <div>
+                ${routes[routeId].lineNameLong}
+            </div>
+        `
+    })
+
+    contentString += '</div></div>'
+
+    console.log('stop clciked');
+
+
+    const infoWindow = new google.maps.InfoWindow({
+        content: contentString,
+    });
+    console.log('trying to reference,', stopsMarkers[stopId])
+    console.log('WHY UNDEFINED', stopsMarkers);
+    infoWindow.open(map, stopsMarkers[stopId]);
 }
 
 async function addMarkerPopup(id) {
@@ -198,35 +249,62 @@ async function addMarkerPopup(id) {
     });
 }
 
+
+function highlightRoute(routeIds) {
+    routePaths.forEach(path => {
+        if (routeIds.includes(path.routeId)) {
+            path.setOptions({strokeOpacity: 1.0});
+            path.setOptions({strokeWeight: 5});
+            setTimeout(() => {
+                path.setOptions({strokeOpacity: 0.7});
+                path.setOptions({strokeWeight: 1});
+            }, 3500)
+        } else {
+            path.setOptions({strokeOpacity: 0.7});
+            path.setOptions({strokeWeight: 1});
+        }
+    });
+}
+
 async function addStops() {
     let stops = await findBusStops();
     console.log('stops', stops.stops);
 
     for (const [stopId, stop] of Object.entries(stops.stops)) {
-        console.log('asdfasdfasdf', stops.routes[stop.routeId][1], stop.latitude);
-        stops[stop.id] = new google.maps.Marker({
+        // bruh
+        let fillColor = stops.routes[stop.routeId][1];
+        let strokeColor = stops.routes[stop.routeId][1];
+        if (stopsToRoutes[stop.id].length > 1) {
+            strokeColor = stops.routes[stopsToRoutes[stop.id][0]][1]
+        }
+        console.log('ummm', stopId, stop, stop.id);
+        stopsMarkers[stop.id] = new google.maps.Marker({
             position: new google.maps.LatLng(stop.latitude, stop.longitude),
             icon: {
-                path: 'M-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0',
-                scale: 1.5, //25012024 :7,
-                fillColor: "#FFFFFF",
+                //path: 'M-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0',
+                path: 'M -5,0 A 5,5 0 0,1 5,0 A 5,5 0 1,1 -5,0 Z',
+                scale: 1.25, //25012024 :7,
+                //fillColor: "#FFFFFF",
+                fillColor: fillColor,
                 fillOpacity: 1,
-                strokeColor: stops.routes[stop.routeId][1],
+                strokeColor: strokeColor,
+                //strokeColor: 'transparent',
                 strokeOpacity: 1,
-                strokeWeight:3,
+                strokeWeight:2.5,
                 labelOrigin: new google.maps.Point(0, 2)
             },
-            /*visible:true,
-            zIndex: 3,
             stopId: stop.stopId,
+            stopName: stop.name,
             id: stop.stopId,
-            routeId: stop.routeId,
-            //snippet: JSON.stringify(theStop),*/
+            routeIds: stopsToRoutes[stop.id],
             title: stop.name,
             label:{text:" ",color: "#0000ffaa",fontSize: "11px"},
         });
 
-        stops[stop.id].setMap(map);
+        stopsMarkers[stop.id].setMap(map);
+        stopsMarkers[stop.id].addListener('click', async () => await stopMarkerPopup(stop.id));
+        stopsMarkers[stop.id].addListener('mouseover', () => highlightRoute(stopsMarkers[stop.id].routeIds));
+
     }
 }
 
@@ -378,6 +456,8 @@ async function initMap() {
         streetViewControl: false
     });
 
+    await createStopRoutesMap();
+    console.log('VALUE AFTER STOP ROUTES:', stopsToRoutes);
     await addMarkers();
     await addStops();
     await initPolyLines();
