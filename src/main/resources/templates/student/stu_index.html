@@ -38,30 +38,20 @@
             </div>
         </div>
 
-        <div class="column right" style="background-color: white; border: 1.5px solid #ffb71b">
-            <h2>REQUEST A RIDE</h2>
+        <div class="column right" style="background-color: white; border: 1.5px solid #ffb71b;">
+            <h2>RECENT ALERTS</h2>
             <hr class="yellow">
-            <form>
-                <label for="alertTarget">Pick Up: &nbsp</label>
-                <select id="alertTarget">
-                    <option>College Ave</option>
-                    <option>Walker Circle</option>
-                    <option>Spartan Village</option>
-                    <option>Spring Garden</option>
-                </select>
-                <br>
-                <label for="alertTarget">Drop Off: </label>
-                <select id="alertTarget">
-                    <option>Walker Circle</option>
-                    <option>College Ave</option>
-                    <option>Spartan Village</option>
-                    <option>Spring Garden</option>
-                </select>
-                <br>
-                <button type="submit">Submit</button>
-                <br>
-            </form>
+            <div class="alert-container">
+                <div th:each="alert, iterStat : ${alerts}" class="alert" th:if="${iterStat.index < 3}">
+                    <h3 th:text="${alert.title}"></h3>
+                    <hr>
+                    <p th:text="${alert.content}"></p>
+                    <p th:text="${alert.createdAt}"></p>
+                </div>
+            </div>
         </div>
+
+
     </div>
 </main>
 

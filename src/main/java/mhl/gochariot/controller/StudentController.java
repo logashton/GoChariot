@@ -1,6 +1,8 @@
 package mhl.gochariot.controller;
 
+import mhl.gochariot.model.Alert;
 import mhl.gochariot.model.User;
+import mhl.gochariot.service.AlertService;
 import mhl.gochariot.service.DriverNameService;
 import mhl.gochariot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Collections;
+import java.util.List;
+
 @Controller
 @RequestMapping("/student")
 public class StudentController {
@@ -19,6 +24,9 @@ public class StudentController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    AlertService alertService;
 
 
     @GetMapping({"/", "/home", "/index", ""})
@@ -32,6 +40,8 @@ public class StudentController {
         }
 
         model.addAttribute("user", user);
+        List<Alert> alerts = alertService.findAllAlerts();
+        model.addAttribute("alerts", alerts);
         return "student/stu_index";
     }
 

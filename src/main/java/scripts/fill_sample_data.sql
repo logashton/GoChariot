@@ -40,10 +40,12 @@ INSERT INTO Review (UserId, DriverFirstName, DriverLastName, DriverIDPGO, Rating
 
 
 INSERT INTO Request (Route, Pickup, DropOff, Status, UserId, DriverId, RequestTime, AcceptTime) VALUES
-    ('Campus Loop', 'School of Music', '430 Tate st', 'pending', 1,  4, CURRENT_TIMESTAMP, NULL),
+    ('Campus Loop', 'School of Music', '430 Tate st', 'pending', 1,  4, CURRENT_TIMESTAMP, NULL);
 
 INSERT INTO Login (UserId, LoginTime, IPAddress, UserAgent) VALUES
     (1, CURRENT_TIMESTAMP, '1.1.1.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)');
 
-INSERT INTO Alert (UserId, Content, Title, TargetAudience, CreatedAt) VALUES
-    (2, 'Example alert', 'Example alert title', 'Student', CURRENT_TIMESTAMP);
+INSERT INTO Alert (UserId, Content, Title, CreatedAt) VALUES
+    (2, 'Example alert', 'Example alert title', CURRENT_TIMESTAMP),
+    (2, 'a lot of stuff just happened', 'an alert for a lot of stuff', CURRENT_TIMESTAMP),
+    (2, 'alert alert alert', 'IMPORTANT ALERT', CURRENT_TIMESTAMP);

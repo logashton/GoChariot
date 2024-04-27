@@ -45,7 +45,7 @@ public class SecurityConfiguration {
                 .userDetailsService(userService)
                 .logout(logout -> logout
                         .logoutUrl("/signout")
-                        .logoutSuccessUrl("/") // Redirect to this URL after logout
+                        .logoutSuccessUrl("/")
                         .permitAll()
                 );
 

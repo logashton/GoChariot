@@ -88,14 +88,12 @@ CREATE TABLE Routes (
                         EndTime TIMESTAMP NOT NULL
 );
 
-CREATE TYPE TargetAudience AS ENUM ('Driver', 'Admin', 'Student');
 
 CREATE TABLE Alert (
                         id SERIAL PRIMARY KEY,
                         UserId INTEGER REFERENCES Users(UserId),
                         Content TEXT,
                         Title TEXT,
-                        TargetAudience TargetAudience,
                         CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
