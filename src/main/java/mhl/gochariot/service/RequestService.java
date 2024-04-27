@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -46,14 +47,20 @@ public class RequestService {
         return requestRepository.findById(id);
     }
 
+    public Page<RequestDTO> getRequestsByDriverIdAndStatus(Integer driverId, String status, Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("requestTime").descending());
+        return requestRepository.findRequestsByDriverIdAndStatus(driverId, status, pageable);
+    }
+
     public void updateRequestStatus(Integer id, String status) {
         Optional<Request> optionalRequest = requestRepository.findById(id);
+        status = status.toLowerCase();
 
         if (optionalRequest.isPresent()) {
             Request request = optionalRequest.get();
             request.setStatus(status);
 
-            if (status == "accepted") {
+            if (Objects.equals(status, "accepted")) {
                 request.setAcceptTime(new Timestamp(System.currentTimeMillis()));
             }
 

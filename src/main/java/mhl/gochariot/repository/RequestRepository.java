@@ -18,5 +18,8 @@ public interface RequestRepository  extends JpaRepository<Request, Integer> {
     @Query("SELECT NEW mhl.gochariot.service.RequestDTO(r.id, r.route, r.pickUp, r.dropOff, r.status, r.requestTime, r.acceptTime, u.userId, u.username, d.driverId, d.driverIdPGO.driverIdPGO, du.firstName, du.lastName) FROM Request r JOIN r.user u JOIN r.driver d JOIN d.user du WHERE u.userId = ?1")
     Page<RequestDTO> findRequestsByUser(Integer id, Pageable pageable);
 
+    @Query("SELECT NEW mhl.gochariot.service.RequestDTO(r.id, r.route, r.pickUp, r.dropOff, r.status, r.requestTime, r.acceptTime, u.userId, u.username, d.driverId, d.driverIdPGO.driverIdPGO, du.firstName, du.lastName) FROM Request r JOIN r.user u JOIN r.driver d JOIN d.user du WHERE d.driverId = ?1 AND r.status = ?2")
+    Page<RequestDTO> findRequestsByDriverIdAndStatus(Integer id, String status, Pageable pageable);
+
     List<Request> findByUserAndDriverAndStatus(User user, Driver driver, String status);
 }

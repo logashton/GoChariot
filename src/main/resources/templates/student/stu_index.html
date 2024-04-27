@@ -43,7 +43,7 @@
             <hr class="yellow">
             <div class="alert-container">
                 <div th:each="alert, iterStat : ${alerts}" class="alert" th:if="${iterStat.index < 3}">
-                    <h3 th:text="${alert.title}"></h3>
+                    <h3 th:text="${alert.title.toUpperCase()}"></h3>
                     <hr>
                     <p th:text="${alert.content}"></p>
                     <p th:text="${alert.createdAt}"></p>

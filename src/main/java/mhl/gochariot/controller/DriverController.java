@@ -1,11 +1,9 @@
 package mhl.gochariot.controller;
 
 import mhl.gochariot.model.Alert;
+import mhl.gochariot.model.Driver;
 import mhl.gochariot.model.User;
-import mhl.gochariot.service.AlertService;
-import mhl.gochariot.service.DriverNameService;
-import mhl.gochariot.service.RequestService;
-import mhl.gochariot.service.UserService;
+import mhl.gochariot.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,10 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
-@RequestMapping("/student")
-public class StudentController {
+@RequestMapping("/driver")
+public class DriverController {
     @Autowired
     DriverNameService driverNameService;
 
@@ -32,45 +31,43 @@ public class StudentController {
     @Autowired
     RequestService requestService;
 
+    @Autowired
+    DriverService driverService;
+
+    @Autowired
+    ReviewService reviewService;
 
     @GetMapping({"/", "/home", "/index", ""})
-    public String studentHome(Model model) {
+    public String driverHome(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         User user = userService.findByUsername(currentPrincipalName);
-
+        Driver driver = driverService.findByUser(user).get();
 
         if (user == null) {
             return "redirect:/login";
         }
 
         model.addAttribute("user", user);
-        List<Alert> alerts = alertService.findAllAlerts();
-        model.addAttribute("alerts", alerts);
-        return "student/stu_index";
-    }
+        String average = "No reviews";
+        Optional<Double> optAverage = reviewService.avgReviewsByDriverIdPGO(driver.getDriverIdPGO().getDriverIdPGO());
 
-    @GetMapping("/review")
-    public String studentReview(Model model) {
-        model.addAttribute("driverNameList",
-                driverNameService.findAllDriverNames());
-        return "student/stu_reviews";
-    }
+        if (optAverage.isPresent()) {
+            average = "★★★★★".substring(0, (int)Math.round(optAverage.get()));
+        }
 
-    @GetMapping("/add-review")
-    public String studentAddReview(Model model) {
-        model.addAttribute("driverNameList",
-                driverNameService.findAllDriverNames());
-        return "student/stu_add_review";
-    }
+        model.addAttribute("rating", average);
 
-    @GetMapping("/tracker")
-    public String studentTracker() {
-        return "student/stu_track";
+        return "driver/dri_index";
     }
 
     @GetMapping("/requests")
-    public String studentRequests(Model model) {
-        return "student/stu_requests";
+    public String driverRequests() {
+        return "driver/dri_requests";
+    }
+
+    @GetMapping("/alert")
+    public String driverAlert() {
+        return "driver/dri_alert";
     }
 }

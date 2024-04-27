@@ -61,10 +61,15 @@ public class PublicController {
                 System.out.println("CURRENT ROEL: ");
                 System.out.print(authority.getAuthority());
                 if (authority.getAuthority().equals("Student")) {
+                    System.out.println("redirecting because student");
                     return "redirect:/student";
+                } else if (authority.getAuthority().equals("Driver")) {
+                    System.out.println("redirecting because driver");
+                    return "redirect:/driver";
                 }
             }
         }
+        System.out.println("no redirect logged in");
         return "index";
     }
     @GetMapping("/login")

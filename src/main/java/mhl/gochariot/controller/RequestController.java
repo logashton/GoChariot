@@ -47,6 +47,20 @@ public class RequestController {
         return requestService.getRequestsByUserId(user.getUserId(), pageNo, pageSize);
     }
 
+    @GetMapping("/api/requests/driver_requests")
+    public Page<RequestDTO> requestsByDriver(
+            @RequestParam(name = "page", defaultValue = "0") Integer pageNo,
+            @RequestParam(name = "size", defaultValue = "4") Integer pageSize,
+            @RequestParam(name = "status") String status
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        User user = UserService.findByUsername(currentPrincipalName);
+        Driver driver = driverService.findByUser(user).get();
+
+        return requestService.getRequestsByDriverIdAndStatus(driver.getDriverId(), status, pageNo, pageSize);
+    }
+
     @PostMapping("/api/requests/add")
     public ResponseEntity<?> addRequest(@ModelAttribute Request request, HttpServletRequest data) {
         System.out.println("Request received");
@@ -85,16 +99,26 @@ public class RequestController {
         @RequestParam(name = "id") Integer id,
         @RequestParam(name = "status") String status
      ) {
+        System.out.println("does it even make it here???");
         status = status.toLowerCase();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         User user = UserService.findByUsername(currentPrincipalName);
         String role = "";
 
+        System.out.println("FOUND USER WITH NAME: ");
+        System.out.println(user.getUsername());
+        System.out.println(user.toString());
+        System.out.println(user.getRoles().toString());
+
         System.out.println("Authenticated user: " + authentication.getName());
         for (GrantedAuthority authority : authentication.getAuthorities()) {
             role = authority.getAuthority();
         }
+
+        System.out.println("SENDING REQUEST STATUS UPATE WITH ROLE");
+        System.out.println(role);
+        System.out.println("\n\n\n");
 
 
         Optional<Request> request = requestService.findById(id);
@@ -104,29 +128,29 @@ public class RequestController {
         } else if (!VALID_STATUSES.contains(status)) {
             System.out.println("invalid status");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid status");
-        } else if (role == "student") {
+        } else if (Objects.equals(role, "Student")) {
             if (!Objects.equals(request.get().getUser().getUserId(), user.getUserId())) {
-                System.out.println("forbidden, user tried to edit request they don't own");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not own this request");
+                System.out.println("user tried to edit request they don't own\n\n\n");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("You do not own this request");
             }
 
-            if (status == "declined" || status == "accepted") {
-                System.out.println("forbidden, user tried to set a status theyr'e nto allowed to");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to set this status");
+            if (status.equals("declined") || status.equals("accepted")) {
+                System.out.println("user tried to set a status theyr'e nto allowed to \n\n\n");
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("You do not have permission to set this status");
             }
-        } else if (role == "driver") {
-                Driver requestDriver = request.get().getDriver();
-                Optional<Driver> driverUser = driverService.findByUser(user);
-
-                if (!Objects.equals(requestDriver.getUser().getUserId(), driverUser.get().getUser().getUserId())) {
-                    System.out.println("forbidden, driver tried to edit request they don't own");
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not the driver of this request");
-                }
+        } else if (Objects.equals(role, "Driver")) {
+            Driver requestDriver = request.get().getDriver();
+            Optional<Driver> driverUser = driverService.findByUser(user);
+            System.out.println(requestDriver.getUser().getUserId());
+            System.out.println(driverUser.get().getUser().getUserId());
+            if (!Objects.equals(requestDriver.getUser().getUserId(), driverUser.get().getUser().getUserId())) {
+                System.out.println("driver tried to edit request they don't own\n\n\n");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("You are not the driver of this request");
+            }
         }
 
         requestService.updateRequestStatus(id, status);
         return ResponseEntity.ok("Status updated");
-
 
     }
 

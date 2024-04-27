@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <th:block th:replace="fragments/base :: baseHead"></th:block>
+</head>
+<body>
+  <div id="splash" th:style="'background-image: url(\'' + @{/images/uncg-spring-splash-overlay0.3.jpg} + '\');'">
+    <th:block th:replace="fragments/driver_navbar :: navbarContent"></th:block>
+  </div>
+
+  <main>
+    <div class="column left">
+      <h2>WELCOME</h2>
+      <hr class="yellow">
+      <p>This is your dashboard as a Spartan Chariot driver, where you can see your personal information and average rating.</p>
+      <br>
+      <div class="profile-container" style="margin-bottom: 50px">
+        <div>
+          <h2>YOUR INFORMATION</h2>
+          <hr class="yellow">
+          <div class="profile-info"><span class="profile-info-title">Name:</span> <span th:text="${user.firstName} + ' ' + ${user.lastName}"></span></div>
+          <div class="profile-info"><span class="profile-info-title">Email:</span> <span th:text="${user.email}"></span></div>
+          <div class="profile-info"><span class="profile-info-title">Username:</span> <span th:text="${user.username}"></span></div>
+          <div class="profile-info"><span class="profile-info-title">Average Rating:</span> <span th:text="${rating}"></span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

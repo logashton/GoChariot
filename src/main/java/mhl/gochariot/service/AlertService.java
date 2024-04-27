@@ -20,4 +20,8 @@ public class AlertService {
     public List<Alert> findAllAlerts() {
         return alertRepository.findAlertsRecent();
     }
+
+    public void saveAlert(Alert alert) {
+        alertRepository.save(alert);
+    }
 }

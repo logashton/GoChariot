@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <th:block th:replace="fragments/base :: baseHead"></th:block>
+    <style>
+        .status-tab {
+            cursor: pointer;
+        }
+        .status-tab.active {
+            background-color: #ffb71b;
+            color: #0f2044;
+        }
+        .btn-tab {
+            border: 1px solid #ffb71b;
+            border-radius: 0;
+            margin-right: 5px;
+        }
+        .btn-tab.active {
+            background-color: #ffb71b;
+            color: #fff;
+        }
+        .request-table {
+            width: 100%;
+        }
+        .request-table th, .request-table td {
+            vertical-align: middle;
+            text-align: center;
+            padding: 10px;
+        }
+        .request-table th {
+            background-color: #ffb71b;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div id="splash" th:style="'background-image: url(\'' + @{/images/uncg-spring-splash-overlay0.3.jpg} + '\');'">
+    <th:block th:replace="fragments/driver_navbar :: navbarContent"></th:block>
+</div>
+<input id="csrf" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<h1>Ride Requests</h1>
+<div class="container mt-5">
+    <div class="d-flex mb-3">
+        <div class="d-flex flex-grow-1" id="statusTabs">
+            <button class="btn btn-tab status-tab active" data-status="PENDING">Pending</button>
+            <button class="btn btn-tab status-tab" data-status="CANCELED">Canceled</button>
+            <button class="btn btn-tab status-tab" data-status="ACCEPTED">Accepted</button>
+            <button class="btn btn-tab status-tab" data-status="DECLINED">Declined</button>
+        </div>
+        <div>
+            <button class="btn btn-primary" id="refreshBtn">Refresh Requests</button>
+            <span id="refreshTimer" class="ml-2">Updates every 30 seconds</span>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered request-table">
+            <thead>
+            <tr>
+                <th>Route</th>
+                <th>Pickup</th>
+                <th>Dropoff</th>
+                <th>Status</th>
+                <th>Requested by</th>
+                <th>Requested at</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="requestList">
+            </tbody>
+        </table>
+    </div>
+    <nav aria-label="Page navigation">
+        <ul id="pagination" class="pagination justify-content-center">
+        </ul>
+    </nav>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    async function updateRequestList(status) {
+        await fetch(`/api/requests/driver_requests?page=0&size=50&status=${status.toLowerCase()}`)
+            .then(response => response.json())
+            .then(data => {
+                $('#requestList').empty();
+                data.content.forEach(request => {
+                    const html = `
+                            <tr>
+                                <td>${request.route}</td>
+                                <td>${request.pickUp}</td>
+                                <td>${request.dropOff}</td>
+                                <td>${request.status.toUpperCase()}</td>
+                                <td>${request.userName}</td>
+                                <td>${formatTimestamp(request.requestTime)}</td>
+                                <td>
+                                    ${request.status === 'pending' ?
+                        `<button class="btn btn-success mr-2" onclick="acceptRequest(${request.id})">Accept</button>
+                                         <button class="btn btn-danger" onclick="declineRequest(${request.id})">Decline</button>` :
+                        request.status === 'accepted' ?
+                            `<button class="btn btn-secondary" onclick="cancelRequest(${request.id})">Cancel</button>` :
+                            ''}
+                                </td>
+                            </tr>`;
+                    $('#requestList').append(html);
+                });
+            })
+            .catch(error => console.error('Error fetching requests:', error));
+    }
+
+    function formatTimestamp(timestamp) {
+        const date = new Date(timestamp);
+        return `${date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'})} ${date.toLocaleTimeString('en-US', {hour: 'numeric', minute: 'numeric'})}`;
+    }
+
+    async function acceptRequest(id) {
+        await updateRequestStatus(id, 'ACCEPTED');
+        updateRequestList($('#statusTabs').find('.status-tab.active').data('status'));
+    }
+
+    async function declineRequest(id) {
+        await updateRequestStatus(id, 'DECLINED');
+        updateRequestList($('#statusTabs').find('.status-tab.active').data('status'));
+    }
+
+    async function cancelRequest(id) {
+        await updateRequestStatus(id, 'CANCELED');
+        updateRequestList($('#statusTabs').find('.status-tab.active').data('status'));
+    }
+
+    async function updateRequestStatus(id, status) {
+        updateRequestList($('#statusTabs').find('.status-tab.active').data('status'));
+        let csrfToken = document.getElementById('csrf').value;
+        const data = new URLSearchParams();
+        data.append('id', id);
+        data.append('status', status.toLowerCase());
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: data
+        };
+
+        await fetch('/api/requests/update_status', options)
+            .then(response => response.json())
+            .then(data => {
+                updateRequestList($('#statusTabs').find('.status-tab.active').data('status'));
+            })
+            .catch(error => console.error('Error updating request status:', error));
+    }
+
+    function updateRefreshTimer() {
+        let count = 30;
+        const timer = setInterval(() => {
+            $('#refreshTimer').text(`Updates every ${count} seconds`);
+            if (count === 0) {
+                clearInterval(timer);
+                updateRequestList($('#statusTabs').find('.status-tab.active').data('status'));
+                count = 30;
+                updateRefreshTimer();
+            }
+            count--;
+        }, 1000);
+    }
+
+    $(document).ready(() => {
+        updateRequestList('PENDING');
+        updateRefreshTimer();
+
+        $('.status-tab').click(function() {
+            $('.status-tab').removeClass('active');
+            $(this).addClass('active');
+            updateRequestList($(this).data('status'));
+        });
+
+        $('#refreshBtn').click(() => {
+            updateRequestList($('#statusTabs').find('.status-tab.active').data('status'));
+        });
+    });
+</script>
+</body>
+</html>
