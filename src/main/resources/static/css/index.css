@@ -1,5 +1,19 @@
 /***** OVERALL *****/
 
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ffb71b;
+  border-radius: 25%;
+  height: 25px;
+}
+
 
 
 body {

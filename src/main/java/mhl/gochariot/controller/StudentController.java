@@ -1,7 +1,11 @@
 package mhl.gochariot.controller;
 
+import mhl.gochariot.model.User;
 import mhl.gochariot.service.DriverNameService;
+import mhl.gochariot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +17,21 @@ public class StudentController {
     @Autowired
     DriverNameService driverNameService;
 
+    @Autowired
+    UserService userService;
+
+
     @GetMapping({"/", "/home", "/index", ""})
-    public String studentHome() {
+    public String studentHome(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        User user = userService.findByUsername(currentPrincipalName);
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("user", user);
         return "student/stu_index";
     }
 
