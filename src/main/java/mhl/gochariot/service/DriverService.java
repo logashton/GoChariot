@@ -39,4 +39,8 @@ public class DriverService {
     public Optional<Driver> findByUser(User user) {
         return driverRepository.findByUser(user);
     }
+
+    public void saveDriver(Driver driver) {
+        driverRepository.save(driver);
+    }
 }

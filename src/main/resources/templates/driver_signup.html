@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <th:block th:replace="fragments/base :: baseHead"></th:block>
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+<div id="splash-background" th:style="'background-image: url(\'' + @{/images/campus-splash-overlay0.3.jpg} + '\');'">
+    <th:block th:replace="fragments/navbar :: navbarContent"></th:block>
+    <main>
+        <section class="signup-container">
+            <h2>CREATE AN ACCOUNT</h2>
+            <hr class="yellow">
+            <div style="color: red;" th:if="${error}">
+                <p th:text="${error}"></p>
+            </div>
+            <div style="color: green;" th:if="${success}">
+                <p th:text="${success}"></p>
+            </div>
+            <form target="/driver_signup" method="post" onsubmit="return validatePassword()">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <div class="signup-form">
+                    <input name="firstName" type="text" class="form-control" placeholder="First Name" required>
+                    <input name="lastName" type="text" class="form-control" placeholder="First Name" required>
+                    <input name="driverIdPGO" type="number" class="form-control" placeholder="Passio GO! Driver ID Number" required>
+                    <input name="email" type="email" class="form-control" placeholder="Email" required>
+                    <input name="username" pattern="[A-Za-z0-9]+" type="text" class="form-control" placeholder="Username (alphanumeric)" required>
+                    <input id="password" name="password" type="password" class="form-control" placeholder="Password" required>
+                    <input id="confirmPassword" name="confirmPassword" type="password" class="form-control" placeholder="Confirm Password" required>
+                    <br>
+                    <button>SIGN UP</button>
+                </div>
+            </form>
+            <p>Already have an account? <a href="/login"><u>Login</u></a></p>
+            <p>Are you a student? <a href="/signup"><u>Sign up here...</u></a>
+        </section>
+    </main>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
