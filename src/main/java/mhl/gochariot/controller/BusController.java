@@ -160,7 +160,7 @@ public class BusController {
 
     @GetMapping("/api/bus/verified/id/{driverIdPGO}")
     public ResponseEntity<?> isDriverVerified(@PathVariable() Integer driverIdPGO) {
-        boolean driverFound = driverService.findByDriverIdPGO(driverIdPGO);
+        boolean driverFound = driverService.doesExistByDriverIdPGO(driverIdPGO);
 
         return ResponseEntity.ok(driverFound);
 

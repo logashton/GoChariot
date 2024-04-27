@@ -50,12 +50,6 @@ public class PublicController {
     @Autowired
     RoleService roleService;
 
-    private String generateSalt() {
-        SecureRandom random = new SecureRandom();
-        byte[] saltBytes = new byte[16];
-        random.nextBytes(saltBytes);
-        return Base64.getEncoder().encodeToString(saltBytes);
-    }
 
     @GetMapping({"/home", "", "/index"})
     public String showHome() {

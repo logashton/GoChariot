@@ -1,6 +1,7 @@
 package mhl.gochariot.service;
 
 import mhl.gochariot.model.DriverName;
+import mhl.gochariot.model.User;
 import mhl.gochariot.repository.DriverRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -21,12 +22,21 @@ public class DriverService {
     @Autowired
     DriverNameService driverNameService;
 
-    public boolean findByDriverIdPGO(Integer id) {
+    public boolean doesExistByDriverIdPGO(Integer id) {
         Optional<DriverName> driverName = driverNameService.findByDriverIdPGO(id);
         if (driverName.isPresent()) {
             return driverRepository.findByDriverIdPGO(driverName.get()).isPresent();
         }
 
         return false;
+    }
+
+    public Optional<Driver> findByDriverIdPGO(Integer id) {
+        Optional<DriverName> driverName = driverNameService.findByDriverIdPGO(id);
+        return driverRepository.findByDriverIdPGO(driverName.get());
+    }
+
+    public Optional<Driver> findByUser(User user) {
+        return driverRepository.findByUser(user);
     }
 }

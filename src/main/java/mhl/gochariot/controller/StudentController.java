@@ -4,6 +4,7 @@ import mhl.gochariot.model.Alert;
 import mhl.gochariot.model.User;
 import mhl.gochariot.service.AlertService;
 import mhl.gochariot.service.DriverNameService;
+import mhl.gochariot.service.RequestService;
 import mhl.gochariot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,9 @@ public class StudentController {
 
     @Autowired
     AlertService alertService;
+
+    @Autowired
+    RequestService requestService;
 
 
     @GetMapping({"/", "/home", "/index", ""})
@@ -62,5 +66,10 @@ public class StudentController {
     @GetMapping("/tracker")
     public String studentTracker() {
         return "student/stu_track";
+    }
+
+    @GetMapping("/requests")
+    public String studentRequests(Model model) {
+        return "student/stu_requests";
     }
 }

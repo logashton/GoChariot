@@ -73,6 +73,7 @@ async function isDriverVerified(driverIdPGO) {
     let verified = await fetch('/api/bus/verified/id/' + driverIdPGO);
     verified = await verified.json();
     console.log('is driver verified: ', verified);
+    return verified;
 
 }
 
@@ -256,6 +257,8 @@ async function requestModal(routeName, driverName, driverIdPGO) {
     document.getElementById('driver').value = driverName;
     document.getElementById('driverIdPGO').value = driverIdPGO;
 
+    console.log('open modal received: ', routeName, driverName, driverIdPGO);
+
     const optionsData = [];
 
     for (const [stopId, stop] of Object.entries(stops.stops)) {
@@ -266,8 +269,8 @@ async function requestModal(routeName, driverName, driverIdPGO) {
 
 
 
-    const selectElement = document.getElementById('pickUpSelect');
-    const selectElementDrop = document.getElementById('dropOffSelect');
+    const selectElement = document.getElementById('pickUp');
+    const selectElementDrop = document.getElementById('dropOff');
     optionsData.forEach(option => {
         const optionElement = document.createElement('option');
         optionElement.value = option;
@@ -301,6 +304,9 @@ async function addMarkerPopup(id) {
         }
 
         let verified = await isDriverVerified(busInfo.theBus.driverId);
+        // ${verified ? '' : 'disabled'}
+
+        console.log(`is ${busInfo.theBus.driver} verified: `, verified);
 
         const contentString = `
     <div style="font-size: 18px; width:auto; max-width: 800px; max-height:400; overflow-x:hidden;">
@@ -312,10 +318,10 @@ async function addMarkerPopup(id) {
         </div>
         <div style="display: flex; flex-direction: column; padding-left: 10px;">
             <p>Route: ${busInfo.theBus.routeName}</p>
-            <p>Driver: ${busInfo.theBus.driver}  ${verified ? '<img src="images/verified.png" alt="Verified" style="width: 20px; height: 20px;">' : ''} (${reviewRating})</p>
+            <p>Driver: ${busInfo.theBus.driver}  ${verified ? '<img src="/images/verified.png" alt="Verified" style="width: 20px; height: 20px;">' : ''} (${reviewRating})</p>
             <p>Speed: ${Math.floor(busInfo.theBus.speed)} mph</p>
             <p>Load: ${busInfo.theBus.paxLoadS}</p>
-            <button onclick="requestModal('${busInfo.theBus.routeName}', '${busInfo.theBus.driverName}', '${busInfo.theBus.driverId}')"  ${verified ? '' : 'disabled'}>Request ride</button>
+            <button onclick="requestModal('${busInfo.theBus.routeName}', '${busInfo.theBus.driver}', '${busInfo.theBus.driverId}')" ${verified ? '' : 'disabled class="btn btn-secondary"'}>${verified ? 'Request ride' : "Can't request ride"}</button>
             <button onclick="redirectToReviews('${busInfo.theBus.driverId}')">View Reviews</button>
         </div>
     </div>
@@ -581,7 +587,7 @@ async function updatePin(id, latitude, longitude, course, pax) {
         let distance = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(buses[id].getPosition()), new google.maps.LatLng(newLatLng));
         distance<10 || distance>300 ? buses[id].setPosition(newLatLng) : buses[id].animateTo(newLatLng,{duration: 9000});
         let ico = await drawBusIconAndMarker(id,buses[id].color,course,pax);
-        console.log('icon properties in update:', id,buses[id].color,course,pax);
+        //console.log('icon properties in update:', id,buses[id].color,course,pax);
         myIcon.url=ico[0]
         myIcon.anchor=new google.maps.Point(ico[1],ico[2])
         buses[id].setIcon(myIcon);
@@ -636,9 +642,8 @@ async function fetchDataAndConnect() {
         });
 
         socket.addEventListener('message', (event) => {
-            console.log('Message from server:', event.data);
+            //console.log('Message from server:', event.data);
             let eventData = JSON.parse(event.data);
-            console.log(eventData.busId);
             updatePin(
                 eventData.busId,
                 eventData.latitude,
@@ -671,7 +676,7 @@ function loadScript() {
 window.onload = loadScript;
 
 setTimeout(() => {
-    requestModal("Campus Loop", 'J. Knight', '123123');
+    //requestModal("Campus Loop", 'J. Knight', '123123');
 }, 5555);
 
 fetchDataAndConnect();

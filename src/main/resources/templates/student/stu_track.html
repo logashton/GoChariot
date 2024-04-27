@@ -55,11 +55,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Request a Ride</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="hideModal()">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
+                <div id="message"></div>
                 <form id="rideRequestForm">
                     <div class="form-group">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
@@ -67,21 +68,21 @@
                         <label for="route">Driver</label>
                         <input type="text" class="form-control" driverIdPGO="driver id here" id="driver" value="driver name" readonly>
                         <label for="route">Route</label>
-                        <input type="text" class="form-control" id="route" value="route name" readonly>
+                        <input type="text" class="form-control" name="route" id="route" value="route name" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="pickUpSelect">Pick Up</label>
-                        <select id="pickUpSelect" class="form-control"></select>
+                        <label for="pickUp">Pick Up</label>
+                        <select id="pickUp" class="form-control"></select>
                     </div>
                     <div class="form-group">
-                        <label for="dropOffSelect">Drop Off</label>
-                        <select id="dropOffSelect" class="form-control"></select>
+                        <label for="dropOff">Drop Off</label>
+                        <select id="dropOff" class="form-control"></select>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" id="submitRequestBtn">Submit</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" id="submitRequestBtn" form="rideRequestForm">Submit</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="hideModal()">Close</button>
             </div>
         </div>
     </div>
@@ -93,24 +94,27 @@
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const formData = new FormData(form);
+        let pickUp = document.getElementById('pickUp').options[document.getElementById('pickUp').selectedIndex].text;
+        let dropOff = document.getElementById('dropOff').options[document.getElementById('dropOff').selectedIndex].text;
 
-        try {
-            const response = await fetch('tbd', {
-                method: 'POST',
-                body: formData
-            });
+        let formData = new FormData(form);
 
-            if (!response.ok) {
-                throw new Error('Failed to send request');
-            }
+        formData.set('pickUp', pickUp);
+        formData.set('dropOff', dropOff);
 
-            const data = await response.json();
-            alert(data.message);
-        } catch (error) {
-            console.error(error);
-            alert('An error occurred while sending the request');
-        }
+        let response = await fetch('/api/requests/add', {
+            method: 'POST',
+            body: formData,
+            headers: {'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value}
+        });
+
+        let message = await response.text()
+        document.getElementById('message').textContent = message;
     });
+
+    function hideModal() {
+        document.getElementById('rideRequestModal').style.display = ''
+        console.log('modal hidden');
+    }
 </script>
 </html>
