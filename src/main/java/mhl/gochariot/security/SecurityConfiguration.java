@@ -33,7 +33,7 @@ public class SecurityConfiguration {
                                 "/reviews", "/reviews?**", "/api/reviews/average", "/api/reviews/all",
                                 "/api/transits**", "/api/transits","/api/transits/**",
                                 "/api/bus**", "/api/bus/**", "/signup").permitAll()
-                        .requestMatchers("/student/**", "/api/reviews/add").permitAll()//.hasAnyAuthority("Student")
+                        .requestMatchers("/student/**", "/api/reviews/add", "/api/requests/user_requests/**").permitAll()//.hasAnyAuthority("Student")
                         .requestMatchers("/driver/**").hasAnyAuthority("Driver")
                         .requestMatchers("/admin/**").hasAnyAuthority("Admin")
                         .anyRequest().authenticated()

@@ -21,7 +21,7 @@ INSERT INTO UserRole (UserId, RoleId) VALUES
 
 INSERT INTO Student (UserId, Rides) VALUES (1, 5), (4, 3);
 
-INSERT INTO Driver (UserId, HoursClocked, Rides, DriverIDPGO) VALUES (2, 5, 15, 1), (5, 7, 25, NULL);
+INSERT INTO Driver (UserId, HoursClocked, Rides, DriverIDPGO) VALUES (2, 5, 15, ), (5, 7, 25, NULL);
 
 INSERT INTO Admin (UserId) VALUES (3);
 
@@ -39,8 +39,8 @@ INSERT INTO Review (UserId, DriverFirstName, DriverLastName, DriverIDPGO, Rating
 
 
 
-INSERT INTO Request (PickUp, DropOff, UserId, RequestTime) VALUES
-    ('Point A', 'Point B', 1, CURRENT_TIMESTAMP);
+INSERT INTO Request (Route, Pickup, DropOff, Status, UserId, DriverId, RequestTime, AcceptTime) VALUES
+    ('Campus Loop', 'School of Music', '430 Tate st', 'pending', 1,  4, CURRENT_TIMESTAMP, NULL),
 
 INSERT INTO Login (UserId, LoginTime, IPAddress, UserAgent) VALUES
     (1, CURRENT_TIMESTAMP, '1.1.1.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)');

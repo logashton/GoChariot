@@ -101,8 +101,12 @@ CREATE TABLE Alert (
 
 CREATE TABLE Request (
                          id SERIAL PRIMARY KEY,
+                         Route VARCHAR(255) NOT NULL,
                          PickUp VARCHAR(255) NOT NULL,
                          DropOff VARCHAR(255) NOT NULL,
+                         Status VARCHAR,
                          UserId INTEGER REFERENCES Users(UserId),
-                         RequestTime TIMESTAMP NOT NULL
+                         DriverId INTEGER REFERENCES Driver(DriverId),
+                         RequestTime TIMESTAMP NOT NULL,
+                         AcceptTime TIMESTAMP DEFAULT NULL
 );
