@@ -1,5 +1,6 @@
 package mhl.gochariot.controller;
 
+import mhl.gochariot.model.Request;
 import mhl.gochariot.model.User;
 import mhl.gochariot.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,15 @@ public class RequestController {
         User user = UserService.findByUsername(currentPrincipalName);
 
         return requestService.getRequestsByUserId(user.getUserId(), pageNo, pageSize);
+    }
+
+    @PostMapping("/api/requests/add")
+    public ResponseEntity<?> addRequest(@ModelAttribute Request request) {
+        System.out.println(request.toString());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+
+        User user = UserService.findByUsername(currentPrincipalName);
     }
 
 

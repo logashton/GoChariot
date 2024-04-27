@@ -3,9 +3,12 @@ package mhl.gochariot.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import mhl.gochariot.model.Driver;
 import mhl.gochariot.model.DriverName;
+import mhl.gochariot.repository.DriverRepository;
 import mhl.gochariot.service.DriverNameDTO;
 import mhl.gochariot.service.DriverNameService;
+import mhl.gochariot.service.DriverService;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -17,12 +20,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
 public class BusController {
     @Autowired
     DriverNameService driverNameService;
+
+    @Autowired
+    DriverService driverService;
 
     RestTemplate restTemplate = new RestTemplate();
     ObjectMapper mapper = new ObjectMapper();
@@ -149,5 +156,14 @@ public class BusController {
             System.out.println("Erorr in /api/bus/stops" + e);
             return ResponseEntity.badRequest().body("Error finding stops");
         }
+    }
+
+    @GetMapping("/api/bus/verified/id/{driverIdPGO}")
+    public ResponseEntity<?> isDriverVerified(@PathVariable() Integer driverIdPGO) {
+        boolean driverFound = driverService.findByDriverIdPGO(driverIdPGO);
+
+        return ResponseEntity.ok(driverFound);
+
+
     }
 }

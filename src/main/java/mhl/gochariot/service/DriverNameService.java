@@ -42,4 +42,8 @@ public class DriverNameService {
     public List<DriverNameDTO> findAllDriverNames() {
         return driverNameRepository.findAllDriverNames();
     }
+
+    public Optional<DriverName> findByDriverIdPGO(Integer id) {
+        return driverNameRepository.findBydriverIdPGO(id);
+    }
 }

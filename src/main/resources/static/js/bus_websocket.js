@@ -69,6 +69,13 @@ function calculateAverageRating(rating) {
     return '★★★★★'.substring(0, Math.round(rating));
 }
 
+async function isDriverVerified(driverIdPGO) {
+    let verified = await fetch('/api/bus/verified/id/' + driverIdPGO);
+    verified = await verified.json();
+    console.log('is driver verified: ', verified);
+
+}
+
 
 function redirectToReviews(driverName) {
     window.location.href = `review?driverId=${encodeURIComponent(driverName)}`;
@@ -210,6 +217,8 @@ function drawRoutePointsPart(points,outdated,routeColor,routeId,routeGroupId, ro
     }
 }
 
+
+
 async function stopMarkerPopup(stopId) {
     let routes = await fetch('/api/transits?path=lines');
     routes = await routes.json();
@@ -238,15 +247,44 @@ async function stopMarkerPopup(stopId) {
     const infoWindow = new google.maps.InfoWindow({
         content: contentString,
     });
-    console.log('trying to reference,', stopsMarkers[stopId])
-    console.log('WHY UNDEFINED', stopsMarkers);
     infoWindow.open(map, stopsMarkers[stopId]);
+}
+
+async function requestModal(routeName, driverName, driverIdPGO) {
+    let stops = await findBusStops();
+    document.getElementById('route').value = routeName;
+    document.getElementById('driver').value = driverName;
+    document.getElementById('driverIdPGO').value = driverIdPGO;
+
+    const optionsData = [];
+
+    for (const [stopId, stop] of Object.entries(stops.stops)) {
+        if (stop.routeName == routeName) {
+            optionsData.push(stop.name);
+        }
+    }
+
+
+
+    const selectElement = document.getElementById('pickUpSelect');
+    const selectElementDrop = document.getElementById('dropOffSelect');
+    optionsData.forEach(option => {
+        const optionElement = document.createElement('option');
+        optionElement.value = option;
+        optionElement.textContent = option;
+        selectElement.appendChild(optionElement);
+        selectElementDrop.appendChild(optionElement.cloneNode(true));
+    });
+
+    document.getElementById('rideRequestModal').style.display='block';
+
 }
 
 async function addMarkerPopup(id) {
     buses[id].addListener('click', async () => {
         let busInfo = await fetch('/api/bus/id/' + id);
         busInfo = await busInfo.json();
+
 
         console.log('the bus: '+ busInfo.theBus);
         console.log(busInfo);
@@ -262,6 +300,8 @@ async function addMarkerPopup(id) {
             reviewRating = calculateAverageRating(await driverInfo.text());
         }
 
+        let verified = await isDriverVerified(busInfo.theBus.driverId);
+
         const contentString = `
     <div style="font-size: 18px; width:auto; max-width: 800px; max-height:400; overflow-x:hidden;">
         <div style="display: flex; flex-direction: column; align-items: flex-start;">
@@ -272,10 +312,10 @@ async function addMarkerPopup(id) {
         </div>
         <div style="display: flex; flex-direction: column; padding-left: 10px;">
             <p>Route: ${busInfo.theBus.routeName}</p>
-            <p>Driver: ${busInfo.theBus.driver} (${reviewRating})</p>
+            <p>Driver: ${busInfo.theBus.driver}  ${verified ? '<img src="images/verified.png" alt="Verified" style="width: 20px; height: 20px;">' : ''} (${reviewRating})</p>
             <p>Speed: ${Math.floor(busInfo.theBus.speed)} mph</p>
             <p>Load: ${busInfo.theBus.paxLoadS}</p>
-            <button onclick="">Request ride</button>
+            <button onclick="requestModal('${busInfo.theBus.routeName}', '${busInfo.theBus.driverName}', '${busInfo.theBus.driverId}')"  ${verified ? '' : 'disabled'}>Request ride</button>
             <button onclick="redirectToReviews('${busInfo.theBus.driverId}')">View Reviews</button>
         </div>
     </div>
@@ -629,6 +669,10 @@ function loadScript() {
 }
 
 window.onload = loadScript;
+
+setTimeout(() => {
+    requestModal("Campus Loop", 'J. Knight', '123123');
+}, 5555);
 
 fetchDataAndConnect();
 

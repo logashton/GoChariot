@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <th:block th:replace="fragments/base :: baseHead"></th:block>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script th:src="@{/js/bus_websocket.js}"></script>
     <style>
         nav {
@@ -23,6 +24,18 @@
             height: 100%;
             z-index: 0;
         }
+
+        #rideRequestModal {
+            position: relative;
+        }
+
+        .modal-dialog {
+            position: fixed;
+            width: 100%;
+            margin: 0;
+            padding: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -37,6 +50,67 @@
 
     </div>
 </main>
-
+<div class="modal" id="rideRequestModal" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Request a Ride</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="rideRequestForm">
+                    <div class="form-group">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <input type="hidden" id="driverIdPGO" name="driverIdPGO" value="driver id pgo id" />
+                        <label for="route">Driver</label>
+                        <input type="text" class="form-control" driverIdPGO="driver id here" id="driver" value="driver name" readonly>
+                        <label for="route">Route</label>
+                        <input type="text" class="form-control" id="route" value="route name" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="pickUpSelect">Pick Up</label>
+                        <select id="pickUpSelect" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dropOffSelect">Drop Off</label>
+                        <select id="dropOffSelect" class="form-control"></select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submitRequestBtn">Submit</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
+<script>
+    const form = document.getElementById('rideRequestForm');
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch('tbd', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to send request');
+            }
+
+            const data = await response.json();
+            alert(data.message);
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred while sending the request');
+        }
+    });
+</script>
 </html>
