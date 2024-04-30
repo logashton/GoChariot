@@ -248,7 +248,9 @@ public class PublicController {
     }
 
     @GetMapping("/reviews")
-    public String reviews() {
+    public String reviews(Model model) {
+        model.addAttribute("driverNameList",
+                driverNameService.findAllDriverNames());
         return "reviews";
     }
 }

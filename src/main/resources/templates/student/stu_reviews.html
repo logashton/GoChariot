@@ -77,6 +77,8 @@
 
     if (driverName) {
       url += `&driverId=${encodeURIComponent(driverName)}`;
+    } else if (paramDriverId) {
+      url += `&driverId=${encodeURIComponent(paramDriverId)}`;
     }
 
     fetch(url)

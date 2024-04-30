@@ -1,25 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <th:block th:replace="fragments/base :: baseHead"></th:block>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script th:src="@{/js/bus_websocket.js}"></script>
+    <style>
+        nav {
+            background-color: rgba(0, 0, 0, 0.5);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        #rideRequestModal {
+            position: relative;
+        }
+
+        .modal-dialog {
+            position: fixed;
+            width: 100%;
+            margin: 0;
+            padding: 10px;
+        }
+
+    </style>
 </head>
 <body>
-    <div id="splash" th:style="'background-image: url(\'' + @{/images/chariot-students-splash-overlay0.3.jpg} + '\');'">
-    <th:block th:replace="fragments/navbar :: navbarContent"></th:block>
+<canvas id="canvas" width="60" height="60" style="position:absolute; top:-100vh;"></canvas>
+<canvas id="tintCanvas" width="60" height="60" style="position:absolute; top:-100vh;"></canvas>
+<img id="circle_big_w_arrow" th:src="@{/images/circle_big_w_arrow_white.png}" style="position:absolute; top:-100vh;">
+<img id="busIconDefImg" th:src="@{/images/bus_white.png}" style="position:absolute; top:-100vh;">
+<main>
+    <div>
+        <th:block th:replace="fragments/navbar :: navbarContent"></th:block>
+        <div id="map"></div>
+
     </div>
-
-    <main>
-        <section class="row">
-            <div class="column left">
-                <h2>LIVE MAP</h2>
-                <hr class="yellow">
-                <div id="map"></div>
-            </div>
-        </section>
-    </main>
-
-    <div th:replace="fragments/footer :: footer"></div>
-
+</main>
 </body>
 </html>

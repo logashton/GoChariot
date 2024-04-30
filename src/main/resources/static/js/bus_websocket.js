@@ -321,7 +321,7 @@ async function addMarkerPopup(id) {
             <p>Driver: ${busInfo.theBus.driver}  ${verified ? '<img src="/images/verified.png" alt="Verified" style="width: 20px; height: 20px;">' : ''} (${reviewRating})</p>
             <p>Speed: ${Math.floor(busInfo.theBus.speed)} mph</p>
             <p>Load: ${busInfo.theBus.paxLoadS}</p>
-            <button onclick="requestModal('${busInfo.theBus.routeName}', '${busInfo.theBus.driver}', '${busInfo.theBus.driverId}')" ${verified ? '' : 'disabled class="btn btn-secondary"'}>${verified ? 'Request ride' : "Can't request ride"}</button>
+            ${window.location.href.includes('student') ? `<button onclick="requestModal('${busInfo.theBus.routeName}', '${busInfo.theBus.driver}', '${busInfo.theBus.driverId}')" ${verified ? '' : 'disabled class="btn btn-secondary"'}>${verified ? 'Request ride' : "Can't request ride"}</button>` : ''}
             <button onclick="redirectToReviews('${busInfo.theBus.driverId}')">View Reviews</button>
         </div>
     </div>
