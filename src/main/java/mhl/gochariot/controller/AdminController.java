@@ -68,4 +68,16 @@ public class AdminController {
     public String adminVerify() {
         return "admin/adm_alert";
     }
+
+    @GetMapping("/reviews")
+    public String reviews(Model model) {
+        model.addAttribute("driverNameList",
+                driverNameService.findAllDriverNames());
+        return "admin/adm_reviews";
+    }
+
+    @GetMapping("/track")
+    public String track() {
+        return "admin/adm_track";
+    }
 }

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <th:block th:replace="fragments/base :: baseHead"></th:block>
+</head>
+<body>
+<div id="splash" th:style="'background-image: url(\'' + @{/images/PIC30376-splash-edit-overlay0.3.jpg} + '\');'">
+    <th:block th:replace="fragments/driver_navbar :: navbarContent"></th:block>
+</div>
+<main class="container mt-5">
+    <div class="row mb-4 justify-content-center">
+        <div class="col-md-6 search-container">
+            <h2 class="text-center">Search Reviews</h2>
+            <div class="input-group">
+                <select id="driverName" class="custom-select">
+                    <option th:each="driverName : ${driverNameList}"
+                            th:value="${driverName.driverIDPGO}"
+                            th:text="${driverName.firstName + ' ' + driverName.lastName}">
+                    </option>
+                </select>
+                <div class="input-group-append">
+                    <button onclick="searchReviews()" class="">Search</button>
+                    <button onclick="resetSearch()" class="">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="reviews-heading mb-4 text-center">RECENT REVIEWS</h2>
+
+    <div class="row" id="reviews-container">
+    </div>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination" id="pagination">
+        </ul>
+    </nav>
+</main>
+
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script>
+    let currentPage = 0;
+    const pageSize = 4;
+
+    const redirectToReviewPage = () => {
+        window.location.href = 'add-review';
+    };
+
+    const searchReviews = () => {
+        const selectedDriverName = document.getElementById('driverName').options[document.getElementById('driverName').selectedIndex].value;
+        console.log('selected: ', selectedDriverName);
+        loadReviews(currentPage, selectedDriverName);
+    };
+
+    const loadReviews = (page, driverName = null) => {
+        let url = `/api/reviews/all?page=${page}&size=${pageSize}`;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramDriverId = urlParams.get('driverId');
+
+        if (paramDriverId) {
+            driverId = paramDriverId;
+            const dropdown = document.getElementById('driverName');
+            for (let i = 0; i < dropdown.options.length; i++) {
+                if (dropdown.options[i].value === paramDriverId) {
+                    dropdown.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        if (driverName) {
+            url += `&driverId=${encodeURIComponent(driverName)}`;
+        } else if (paramDriverId) {
+            url += `&driverId=${encodeURIComponent(paramDriverId)}`;
+        }
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                displayReviews(data.content);
+                displayPagination(data.totalPages, page);
+            })
+            .catch(error => {
+                console.error('Error loading reviews:', error);
+            });
+    };
+
+    const displayReviews = (reviews) => {
+        const container = document.getElementById('reviews-container');
+        container.innerHTML = '';
+
+        reviews.forEach(review => {
+            const reviewHtml = `
+                <div class="col-md-6">
+                    <div class="profile-container mb-4">
+                        <h3 class="driver-name">${review.driverFirstName} ${review.driverLastName} - Rating: ${calculateAverageRating(review.rating)}</h3><br>
+                        <div class="review">
+                            <div class="review-text">
+                                ${review.content}
+                            </div>
+                            <br />
+                            <div class="review-details">
+                                - ${review.userFirstName}
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += reviewHtml;
+        });
+    };
+
+
+    const calculateAverageRating = (rating) => {
+        return '★★★★★'.substring(0, Math.round(rating));
+    };
+
+    const displayPagination = (totalPages, currentPage) => {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+
+        for (let i = 0; i < totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+
+            const button = document.createElement('button');
+            button.className = 'page-link';
+            button.innerHTML = i + 1;
+            button.addEventListener('click', () => loadReviews(i));
+
+            li.appendChild(button);
+            pagination.appendChild(li);
+        }
+    };
+
+    const resetSearch = () => {
+        loadReviews(currentPage);
+    }
+    loadReviews(currentPage);
+</script>
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .button-container button:hover {
+        background-color: #0f2044;
+    }
+
+
+    .button-container {
+        margin-bottom: 20px;
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+        color: white;
+    }
+
+    .search-container h2 {
+        margin-bottom: 10px;
+    }
+
+
+    .search-form label {
+        margin-right: 10px;
+    }
+
+    .search-form select {
+        width: auto;
+        padding: 5px;
+        margin-right: 10px;
+    }
+
+    .search-form button {
+        background-color: #ffb71b;
+        color: white;
+        padding: 5px 15px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .search-form button:hover {
+        background-color: #0f2044;
+    }
+
+    .reviews-heading {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    #pagination {
+        margin-top: 20px;
+        background-color: transparent;
+    }
+
+    #pagination button {
+        background-color: #ffb71b;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    #pagination button[disabled] {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    #pagination button:hover {
+        background-color: #0f2044;
+    }
+
+</style>
+</body>
+

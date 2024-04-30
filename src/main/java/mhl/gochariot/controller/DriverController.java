@@ -70,4 +70,16 @@ public class DriverController {
     public String driverAlert() {
         return "driver/dri_alert";
     }
+
+    @GetMapping("/reviews")
+    public String reviews(Model model) {
+        model.addAttribute("driverNameList",
+                driverNameService.findAllDriverNames());
+        return "driver/dri_reviews";
+    }
+
+    @GetMapping("/track")
+    public String track() {
+        return "driver/dri_track";
+    }
 }
