@@ -83,14 +83,22 @@ public class User implements UserDetails {
 
     @Override
     public String toString() {
-        return "User{"
-                + "userId=" + userId
-                + ", email='" + email + '\''
-                + ", passwordHash='" + passwordHash + '\''
-                + ", passwordSalt='" + passwordSalt + '\''
-                + ", createdAt=" + createdAt
-                + ", updatedAt=" + updatedAt
-                + '}';
+        return "User{" +
+                "userId=" + userId +
+                ", email='" + email + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                ", passwordSalt='" + passwordSalt + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", accountNonExpired=" + accountNonExpired +
+                ", accountNonLocked=" + accountNonLocked +
+                ", credentialsNonExpired=" + credentialsNonExpired +
+                ", enabled=" + enabled +
+                ", roles=" + roles +
+                '}';
     }
 
     @Override

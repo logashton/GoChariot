@@ -43,4 +43,12 @@ public class DriverService {
     public void saveDriver(Driver driver) {
         driverRepository.save(driver);
     }
+
+    public void deleteDriver(Driver driver) {
+        driverRepository.delete(driver);
+    }
+
+    public List<Driver> findAllUnverified() {
+        return driverRepository.findAllByUser_AccountNonLockedFalse();
+    }
 }

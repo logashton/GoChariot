@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <th:block th:replace="fragments/base :: baseHead"></th:block>
+    <style>
+        .container {
+            padding: 20px;
+        }
+        .alert-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<div id="splash" th:style="'background-image: url(\'' + @{/images/uncg-spring-splash-overlay0.3.jpg} + '\');'">
+    <th:block th:replace="fragments/driver_navbar :: navbarContent"></th:block>
+</div>
+<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<div class="container">
+    <h2 class="text-center mb-4">Create Alert</h2>
+    <div id="message"></div>
+    <div class="alert-form">
+        <form id="alertForm">
+            <div class="form-group">
+                <label for="alertTitle">Title:</label>
+                <input type="text" name="title" class="form-control" id="alertTitle" placeholder="Enter title" required>
+            </div>
+            <div class="form-group">
+                <label for="alertContent">Content:</label>
+                <textarea class="form-control" name="content" id="alertContent" rows="5" placeholder="Enter content" required></textarea>
+            </div>
+            <button id="submitButton" type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('submitButton').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            let formData = new FormData(document.getElementById('alertForm'));
+
+            fetch('/api/alert/add', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(error => Promise.reject(new Error(error)));
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('message').textContent = data;
+                })
+                .catch(error => {
+                    document.getElementById('message').textContent = error.message;
+                });
+        });
+    });
+</script>
+</html>

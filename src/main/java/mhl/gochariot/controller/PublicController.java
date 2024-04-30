@@ -68,6 +68,9 @@ public class PublicController {
                 } else if (authority.getAuthority().equals("Driver")) {
                     System.out.println("redirecting because driver");
                     return "redirect:/driver";
+                } else if (authority.getAuthority().equals("Admin")) {
+                    System.out.println("redirecitng becasue admin");
+                    return "redirect:/admin";
                 }
             }
         }

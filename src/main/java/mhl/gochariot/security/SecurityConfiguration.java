@@ -35,8 +35,9 @@ public class SecurityConfiguration {
                                 "/api/bus**", "/api/bus/**", "/signup", "/api/bus/verified/id/**", "/driver_signup").permitAll()
                         .requestMatchers("/student/**", "/api/reviews/add", "/api/requests/user_requests/**", "/api/requests/add/**").hasAnyAuthority("Student")
                         .requestMatchers("/api/requests/update_status/**").hasAnyAuthority("Student", "Driver")
-                        .requestMatchers("/driver/**", "/api/requests/**", "/api/alerts/**", "/api/requests/driver_requests/**").hasAnyAuthority("Driver")
-                        .requestMatchers("/admin/**").hasAnyAuthority("Admin")
+                        .requestMatchers("/driver/**", "/api/requests/**", "/api/requests/driver_requests/**").hasAnyAuthority("Driver")
+                        .requestMatchers("/api/alerts/**").hasAnyAuthority("Driver", "Admin")
+                        .requestMatchers("/admin/**", "/api/users/edit/**", "/api/users/verify/**", "/api/users/reject/**").hasAnyAuthority("Admin")
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form

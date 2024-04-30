@@ -46,4 +46,8 @@ public class DriverNameService {
     public Optional<DriverName> findByDriverIdPGO(Integer id) {
         return driverNameRepository.findBydriverIdPGO(id);
     }
+
+    public void deleteDriverName(DriverName driverName) {
+        driverNameRepository.delete(driverName);
+    }
 }
