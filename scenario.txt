@@ -1,0 +1,20 @@
+Student: Create ride request use case and view reviews use case:
+Student S1 logs in and finds a verified driver to request a ride from. They look at the driver's reviews and request a ride. S1 exists
+Student S2 logs in and finds the same verified driver to request a ride from. S2 exists
+
+Driver:  Accept/Decline request use case:
+1. Driver D1 logs in and views their ride requests. They accept S1's ride request.
+2. Driver D1 refreshes their ride requests. They decline S2's ride request.
+
+Student: Submit review:
+1. Student S1 gets their ride and submits a review for driver D1.
+
+Driver: Send alert
+1. Driver D1 feels the need to write and send an alert. After the alert is sent, Student S1 looks at recent alerts on the Student dashboard.
+
+Driver: Sign up for verification
+1. Driver D2 wants to sign up for Gochariot, so they go through the registration process and await manual verification.
+
+Admin: verify/reject drivers, edit users
+1. Admin A1 logs in, interviews Driver D2 and determines they are a legitimate driver for Passio GO!. A1 verifies D2 and then D2 logs in.
+2. Admin A1 goes to edit users, and finds a Student S3 with a bad username. A1 edits the username of S3 and locks their account. S3 tries to login but can no longer login.
