@@ -1,7 +1,7 @@
 ## GoChariot
 
 ## Team Members
->L, Hasan Hashim, Madelyn Good
+>Ashton, Hasan Hashim, Madelyn Good
 
 ## Nickname
 >GC
